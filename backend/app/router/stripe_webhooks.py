@@ -57,17 +57,11 @@ async def update_subscription(
         try:
             stripe_customer_id = data["customer"]
 
-            amount = data["amount_total"]
             payment_status = data["payment_status"]
             status = data["status"]
+            mode = data["mode"]
 
-            transaction_data = {
-                "amount": amount,
-                "payment_status": payment_status,
-                "status": status,
-            }
-
-            if status == 'complete' and payment_status == 'paid':
+            if status == 'complete' and payment_status == 'paid' and mode == "payment":
                 subscription = (db.query(Subscription).filter(Subscription.stripe_customer_id == stripe_customer_id).first())
                 subscription.classes_available = subscription.classes_available + 1
 
@@ -76,7 +70,6 @@ async def update_subscription(
             return {
                 "status": "success",
                 'transaction': 'one time purchase',
-                "data": transaction_data,
             }
 
         except Exception as e:
@@ -107,15 +100,7 @@ async def update_subscription(
             recurring = 1 if item["price"]["type"] == "recurring" else 0
             status = data["status"]
 
-            subscription_data = {
-                "stripe_subscription_id": stripe_subscription_id,
-                "stripe_price_id": stripe_price_id,
-                "amount": amount,
-                "recurring": recurring,
-                "status": status,
-            }
-
-            if status == 'active':
+            if status == 'active' and recurring == 1:
                 subscription = (db.query(Subscription).filter(Subscription.stripe_customer_id == stripe_customer_id).first())
 
                 subscription.stripe_subscription_id = stripe_subscription_id
@@ -127,8 +112,6 @@ async def update_subscription(
             return {
                 "status": "success",
                 'transaction': 'subscription created',
-                "data": subscription_data,
-                "status": status,
             }
 
         except Exception as e:
