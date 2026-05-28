@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+
+{% block title %}User Registration{% endblock %}
+
+{% block content %}
+
+<div class="page-member">
+  <div class="gap"></div>
+  <h1 class="page-center">Registration</h1>
+  <div style="height: 10px;"></div>
+  
+  <div class="page-center">
+    <h5>Already have an account?</h5>
+  </div>
+  
+  <div class="page-center">
+    <a href="/signin"><h5>Sign In</h5></a>
+  </div>
+  
+  <div style="height: 10px;"></div>
+  
+  <form id="form" method="POST" action="/register" enctype="multipart/form-data">
+  
+    <!-- ================= PERSONAL ================= -->
+    <div class="section">
+      <h3>Personal Information</h3>
+  
+      <div class="row">
+        <div class="field">
+          <label>First Name *</label>
+          <input name="first">
+          <div id="err-first" class="error"></div>
+        </div>
+  
+        <div class="field">
+          <label>Last Name *</label>
+          <input name="last">
+          <div id="err-last" class="error"></div>
+        </div>
+      </div>
+  
+      <div class="row">
+        <div class="field">
+          <label>Email *</label>
+          <input name="email" type="email">
+          <div id="err-email" class="error"></div>
+        </div>
+  
+        <div class="field">
+          <label>Phone *</label>
+          <input name="phone">
+          <div id="err-phone" class="error"></div>
+        </div>
+      </div>
+  
+      <div class="field">
+        <label>Password *</label>
+        <input name="password" type="password">
+        <div id="err-password" class="error"></div>
+      </div>
+  
+      <div class="field">
+        <label>Birthdate *</label>
+        <input name="birthdate" type="date">
+        <div id="err-birthdate" class="error"></div>
+      </div>
+    </div>
+  
+    <!-- ================= ADDRESS ================= -->
+    <div class="section">
+      <h3>Address</h3>
+  
+      <div class="field">
+        <label>Address Line 1 *</label>
+        <input name="address_1">
+        <div id="err-address_1" class="error"></div>
+      </div>
+  
+      <div class="field">
+        <label>Address Line 2</label>
+        <input name="address_2">
+        <div id="err-address_2" class="error"></div>
+      </div>
+  
+      <div class="row">
+        <div class="field">
+          <label>City *</label>
+          <input name="city">
+          <div id="err-city" class="error"></div>
+        </div>
+  
+        <div class="field">
+          <label>State *</label>
+          <input name="state">
+          <div id="err-state" class="error"></div>
+        </div>
+  
+        <div class="field">
+          <label>Zip Code *</label>
+          <input name="zipcode">
+          <div id="err-zipcode" class="error"></div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- ================= PROFILE ================= -->
+    <div class="section">
+      <h3>Profile Picture</h3>
+      <div class="profile-picture">
+        <div class="field">
+  
+          <label for="profile_picture" class="camera-upload">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28"
+                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14.5 4l1.5 2H20a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l1.5-2h5z"/>
+              <circle cx="12" cy="13" r="3"/>
+            </svg>
+          </label>
+  
+          <input
+            id="profile_picture"
+            name="profile_picture"
+            type="file"
+            accept="image/*"
+            capture="environment"
+          />
+          <div id="err-profile_picture" class="error"></div>
+        </div>
+    
+        <img id="photoPreview" class="preview-img" />
+      </div>
+    </div>
+  
+    <!-- ================= EMERGENCY ================= -->
+    <div class="section">
+      <h3>Emergency Contact</h3>
+  
+      <div class="field">
+        <label>Contact Name *</label>
+        <input name="emergency_contact_name">
+        <div id="err-emergency_contact_name" class="error"></div>
+      </div>
+  
+      <div class="row">
+        <div class="field">
+          <label>Relationship *</label>
+          <input name="emergency_contact_relationship">
+          <div id="err-emergency_contact_relationship" class="error"></div>
+        </div>
+  
+        <div class="field">
+          <label>Phone *</label>
+          <input name="emergency_contact_phone">
+          <div id="err-emergency_contact_phone" class="error"></div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- ================= WAIVER ================= -->
+    <h2>Waiver</h2>
+    <div id="waiverPage"></div>
+  
+    <!-- ================= SIGNATURE ================= -->
+    <div class="section">
+      <h3>Signature</h3>
+  
+      <div class="center-mobile">
+        <div class="signature-wrapper">
+          <canvas id="sig"></canvas>
+        </div>
+      </div>
+      <div>
+        <div id="err-sig" class="error"></div>
+      </div>
+  
+      <button type="button" onclick="clearSig()">Clear Signature</button>
+  
+      <div class="field">
+        <label class="checkbox-label">
+          <input type="checkbox" id="isParent">
+          Signing as Parent / Guardian
+        </label>
+        <div id="err-isParent" class="error"></div>
+      </div>
+  
+      <div class="field">
+        <label>Signature Date</label>
+        <input type="date" name="sign_date">
+        <div id="err-sign_date" class="error"></div>
+      </div>
+  
+    </div>
+  
+    <button type="submit">Submit Registration</button>
+    <div id="submit-error" class="error"></div>
+  </form>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/register.js') }}"></script>
+{% endblock %}

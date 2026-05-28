@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}FAQ{% endblock %}
+
+{% block content %}
+
+<section class="page-section">
+
+  <div class="page-hero hero-fade-up">
+    <h1>FAQ</h1>
+    <p>Everything you need to know before training.</p>
+  </div>
+
+  <div class="faq-list">
+
+    <div class="faq-item">
+      <button class="faq-question page-content">
+        <span><h3>Do I need experience to start?</h3></span>
+        <span class="icon"></span>
+      </button>
+      <div class="faq-answer">
+        <p>
+          No, all classes are beginner friendly and do no require any previous experience. Each class will include components from our 12 week fundamentals curriculum for beginners.
+        </p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question page-content">
+        <span><h3>It's my first day, what should I bring?</h3></span>
+        <span class="icon"></span>
+      </button>
+      <div class="faq-answer">
+        <p>
+          Comfortable athletic clothing and water bottle. If you have a gi, bring it along.
+        </p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question page-content">
+        <span><h3>I don't have a gi, can I attend on gi days?</h3></span>
+        <span class="icon"></span>
+      </button>
+      <div class="faq-answer">
+        <p>
+          Yes, we understand that buying a gi can be a sizable investment, especially for beginners. All gi classes will be adjusted to accommodate participants without a gi.
+        </p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question page-content">
+        <span><h3>Do you allow visitors?</h3></span>
+        <span class="icon"></span>
+      </button>
+      <div class="faq-answer">
+        <p>
+          Yes, anyone is welcome to drop in and train. We have a small drop-in fee if you'd prefer to pay per class. Exceptions may be made for visitors who are traveling from out of town. Feel free to contact us if you have any questions.
+        </p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question page-content">
+        <span><h3>I'd like to try out a class, do I need to be a member?</h3></span>
+        <span class="icon"></span>
+      </button>
+      <div class="faq-answer">
+        <p>
+          No, we offer a 1 week trial period for you to see if jiu jitsu is for you.
+        </p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question page-content">
+        <span><h3>Is training safe for beginners?</h3></span>
+        <span class="icon"></span>
+      </button>
+      <div class="faq-answer">
+        <p>
+          Yes, safety is a top priority. We understand that jiu jitsu is a martial
+          art and has some inherent risks. Because of that, saftey is a core component
+          of our curriculum. New students will be taught proper training practices to
+          reduce injury risks.
+        </p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question page-content">
+        <span><h3>Is there an age requirement?</h3></span>
+        <span class="icon"></span>
+      </button>
+      <div class="faq-answer">
+        <p>
+          While there is no strict age requirement, our classes are targeted towards adults and generally accommodate participants 16 years of age and above. If you have a teenager that does not fall in the age category, we're happy to evaluate them on a case by case basis and encourage you to bring them in for a trial class.
+        </p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question page-content">
+        <span><h3>Is there parking?</h3></span>
+        <span class="icon"></span>
+      </button>
+      <div class="faq-answer">
+        <p>
+          Yes, we're located within FUELhouse gym. You're welcome to use any parking spaces within our lot.
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".faq-question").forEach((button) => {
+    button.addEventListener("click", () => {
+      const item = button.closest(".faq-item");
+      item.classList.toggle("active");
+    });
+  });
+});
+</script>
+
+{% endblock %}

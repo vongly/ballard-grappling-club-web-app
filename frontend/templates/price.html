@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Pricing{% endblock %}
+
+{% block content %}
+
+<section class="page-section">
+
+  <!-- HERO -->
+  <div class="page-hero hero-fade-up">
+    <h1>Membership Pricing</h1>
+
+    <p>
+      Simple, flexible training options. No contracts. No hidden fees.
+    </p>
+  </div>
+
+<div class="pricing-container">
+
+  {% for product in products %}
+
+    <div class="pricing-card">
+
+      <h2>
+        ${{ (product.unit_amount / 100) | int }}
+        <span>
+          {% if product.recurring %}
+            / month
+          {% else %}
+            / class
+          {% endif %}
+        </span>
+      </h2>
+
+      <h3>{{ product.name }}</h3>
+
+      <ul>
+        {% if product.name == "Adult Unlimited" %}
+          <li>No contracts</li>
+          <li>Unlimited classes</li>
+
+        {% elif product.name == "Drop-In" %}
+          <li>Pay per class</li>
+          <li>No membership required</li>
+
+        {% else %}
+          <li>{{ product.subscription_classes_per_week }} class(es) per week</li>
+          <li>Flexible training option</li>
+        {% endif %}
+      </ul>
+
+      <a href="/register?price_id={{ product.price_id }}" class="pricing-btn">
+        Purchase
+      </a>
+
+    </div>
+
+  {% endfor %}
+
+</div>
+
+</section>
+
+{% endblock %}

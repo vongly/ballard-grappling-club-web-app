@@ -1,0 +1,261 @@
+
+/* ================= DASHBOARD WRAPPER ================= */
+
+#dashboard {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 90px 16px 40px;
+}
+
+/* ================= LOADING ================= */
+
+#loading {
+  text-align: center;
+  color: #777;
+  font-size: 16px;
+  padding: 40px 0;
+}
+
+/* ================= MAIN CARD ================= */
+
+.dashboard-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+/* ================= PROFILE HEADER ================= */
+
+.profile-header {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 20px;
+}
+
+.profile-pic {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #f2f2f2;
+}
+
+.profile-info h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.profile-info div {
+  font-size: 13px;
+  color: #666;
+  margin-top: 4px;
+}
+
+/* ================= CARD GRID ================= */
+
+.stack {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+.card {
+  background: #f9f9f9;
+  border-radius: 12px;
+  padding: 14px;
+  border: 1px solid #eee;
+}
+
+.card strong {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  color: #333;
+}
+
+/* ================= MEMBERSHIP STATUS ================= */
+
+.membership-status {
+  margin-top: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  max-width: 100%;
+  width: fit-content;
+}
+
+/* ================= BUTTON ================= */
+
+.open-modal-btn {
+  width: 100%;
+  margin: 6px 0;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: var(--slate);
+  color: var(--bone);
+  font-weight: 500;
+}
+
+/* ================= MODAL ================= */
+
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  padding: 16px;
+}
+
+.modal-content {
+  background: white;
+  width: 100%;
+  max-width: 500px;
+  padding: 24px 24px 24px;
+  border-radius: 12px;
+}
+
+/* ================= PLANS ================= */
+
+.plans {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.plan-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 14px;
+  background: #fff;
+  transition: all 0.15s ease;
+  position: relative;
+}
+
+.plan-card:hover {
+  transform: translateY(-2px);
+  border-color: #cbd5e1;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+}
+
+.plan-card h4 {
+  margin: 0 0 6px;
+  font-size: 16px;
+  text-align: center;
+}
+
+.plan-subtext {
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 10px;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.plan-price {
+  font-weight: 600;
+  margin-bottom: 12px;
+  font-size: 13px;
+  color: var(--slate);
+  text-align: center;
+}
+
+.plan-card button {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  background: var(--slate);
+  color: white;
+  font-weight: 500;
+  transition: 0.15s ease;
+}
+
+.plan-card button:hover {
+  background: var(--slate-off);
+}
+
+/* Highlight plan */
+.plan-card.highlight {
+  border: 2px solid #2563eb;
+  background: linear-gradient(180deg, #eff6ff, #ffffff);
+}
+
+.plan-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #2563eb;
+  color: white;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+
+.plan-type {
+  font-weight: 550;
+}
+
+.subscription-details {
+  padding: 20px;
+}
+/* ================= CLOSE BUTTON ================= */
+
+.close-btn {
+  margin-top: 16px;
+  color: var(--slate);
+  text-align: center;
+}
+
+/* ================= DESKTOP ENHANCEMENTS ================= */
+
+@media (min-width: 700px) {
+  #dashboard {
+    padding: 120px 20px 60px;
+  }
+
+  .dashboard-card {
+    padding: 24px;
+  }
+
+  .profile-header {
+    padding: 20px;
+    gap: 18px;
+  }
+
+  .profile-pic {
+    width: 160px;
+    height: 160px;
+  }
+
+  .profile-info h2 {
+    font-size: 20px;
+  }
+
+  .stack {
+    gap: 16px;
+  }
+
+  .plan-card h4 {
+    font-size: 18px;
+  }
+
+  .plan-price {
+    font-size: 14px;
+  }
+}

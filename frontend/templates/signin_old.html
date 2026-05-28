@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Sign In{% endblock %}
+
+{% block content %}
+
+<div class="gap"></div>
+<h1 class="page-center">Sign In</h1>
+<div style="height: 10px;"></div>
+
+<div style="max-width: 400px; margin-inline:auto;">
+  <form id="loginForm">
+    <div style="margin-bottom: 12px;">
+      <input
+        type="email"
+        id="email"
+        placeholder="Email"
+        autocomplete="username"
+        required
+        style="width:100%; padding:10px;"
+      />
+    </div>
+
+    <div style="margin-bottom: 12px;">
+      <input
+        type="password"
+        id="password"
+        placeholder="Password"
+        autocomplete="current-password"
+        required
+        style="width:100%; padding:10px;"
+      />
+    </div>
+
+    <button type="submit">
+      Sign In
+    </button>
+  </form>
+
+  <p id="error" style="color:red; text-align:center; margin-top:10px;"></p>
+</div>
+
+<script>
+  const API_BASE = "{{ API_BASE }}";
+
+  document.getElementById("loginForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const errorEl = document.getElementById("error");
+
+    errorEl.textContent = "";
+
+    try {
+      const res = await fetch(`${API_BASE}/auth`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email, password })
+      });
+
+      if (!res.ok) {
+        throw new Error("Invalid login");
+      }
+
+      const data = await res.json();
+
+      localStorage.setItem("access_token", data.access_token);
+
+      window.location.href = "/dashboard";
+
+    } catch (err) {
+      errorEl.textContent = "Login failed. Please check your credentials.";
+    }
+  });
+</script>
+
+{% endblock %}

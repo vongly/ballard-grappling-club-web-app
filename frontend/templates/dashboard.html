@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+
+{% block title %}My Dashboard{% endblock %}
+
+{% block content %}
+
+<div id="dashboard">
+
+  <div class="dashboard-card">
+
+    <div class="profile-header">
+      <img
+        class="profile-pic"
+        src="{{ student.presigned_url if student.presigned_url else '' }}"
+        alt="Profile Picture"
+      />
+      <div class="profile-info">
+        <h2>{{ student.first }} {{ student.last }}</h2>
+        <div>{{ student.email }}</div>
+
+        <div class="membership-status">
+          {% if subscription %}
+            {% if subscription.status == 1 %}
+              <span class="plan-type" style="color: green">
+                {{ subscription_product.name }}
+              </span>
+            {% else %}
+              <span class="plan-type" style="color: red">
+                No Active Subscription
+              </span>
+            {% endif %}
+
+            <div>
+              {% if subscription.classes_purchased and subscription.classes_purchased > 0 %}
+                <span class="plan-type" style="color: green">
+                  {{ subscription.classes_purchased }} Classes Available
+                <span>
+              {% elif subscription.status == 0 %}
+                <span class="plan-type" style="color: red">
+                  0 Classes Available
+                <span>
+              {% endif %}
+            </div>
+
+          {% else %}
+            <span class="plan-type" style="color: red">
+              No Membership
+            </span>
+          {% endif %}
+        </div>
+        <div>
+          <button class="open-modal-btn" onclick="openModal()"> Manage Membership </button>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div id="membershipModal" class="modal-overlay" onclick="closeModal(event)">
+      <div class="modal-content" onclick="event.stopPropagation()">
+
+        <h3>Choose Your Membership</h3>
+
+       <div class="plans">
+
+          {% for product in products %}
+
+            {% if product.product_order == 0 %}
+              <div class="plan-card highlight">
+                <div class="plan-badge">Most Popular</div>
+            {% else %}
+              <div class="plan-card">
+            {% endif %}
+
+              <h4>{{ product.name }}</h4>
+
+              <div class="plan-price">
+                ${{ (product.unit_amount / 100)|int }}
+                {% if product.recurring == 1 %}
+                  / month
+                {% endif %}
+              </div>
+              <button onclick="selectPlan('{{ product.id }}')">
+                Purchase
+              </button>
+
+            </div>
+
+          {% endfor %}
+          
+        </div>
+        
+        <button class="close-btn" onclick="closeModal()">Close</button>
+
+        <div class="subscription-details">
+          <p>
+            All subscriptions are set to renew on the 1st of every month.
+            Your first month of subscription will be pro rated for the
+            remainder of the current month. Please contact <a href="mailto:info@ballardgrapplingclub.com" target="_blank">info@ballardgrapplingclub.com</a>
+            for any questions or if you'd like to suspend/end your subscription.
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- STACK SECTION -->
+    <div class="stack">
+
+      <!-- WAIVER (kept BELOW modal trigger) -->
+      <div class="card">
+        <strong>Waiver Signed</strong>
+        <div>
+          {% if student.waiver_url %}
+            Yes
+          {% else %}
+            No
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="card">
+        <strong>Birthdate</strong>
+        <div>{{ student.birthdate_formatted or 'N/A' }}</div>
+      </div>
+
+      <div class="card">
+        <strong>Phone</strong>
+        <div>{{ student.phone_formatted or 'N/A' }}</div>
+      </div>
+
+      <div class="card">
+        <strong>Address</strong>
+
+        <div>
+          {{ student.address_1 or '' }}
+
+          {% if student.address_2 %}
+            <br>
+            {{ student.address_2 }}
+          {% endif %}
+
+          <br>
+
+          {{ student.city or '' }},
+          {{ student.state or '' }}
+          {{ student.zipcode or '' }}
+        </div>
+      </div>
+
+      <div class="card">
+        <strong>Emergency Contact</strong>
+
+        <div>
+          {{ student.emergency_contact_name or '' }}
+
+          {% if student.emergency_contact_relationship %}
+          <br>
+            {{ student.emergency_contact_relationship }}
+          {% endif %}
+
+          <br>
+
+          {{ student.emergency_contact_phone_formatted or '' }}
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- JS -->
+<script>
+const STRIPE_CHECKOUT_ENDPOINT = "{{ stripe_checkout_endpoint }}";
+
+function openModal() {
+  document.getElementById("membershipModal").style.display = "flex";
+}
+
+function closeModal() {
+  document.getElementById("membershipModal").style.display = "none";
+}
+
+let checkoutInProgress = false;
+
+
+async function selectPlan(productId) {
+
+  const res = await fetch("/checkout", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    credentials: "include",
+    body: JSON.stringify({ product_id: productId })
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.detail || "Checkout failed");
+  }
+
+  window.location.href = data.checkout_url;
+}
+
+</script>
+
+{% endblock %}

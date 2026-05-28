@@ -1,0 +1,64 @@
+/* =========================
+   PAGES GENERAL
+========================= */
+.page-center {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.page-hero {
+  max-width: 900px;
+  margin: 0 auto;
+
+  padding: 140px 30px 100px;
+
+  text-align: center;
+}
+
+.page-hero h1 {
+  font-size: clamp(42px, 7vw, 72px);
+  line-height: 1.05;
+
+  margin-bottom: 24px;
+}
+
+.page-hero p {
+  font-size: 20px;
+  line-height: 1.8;
+
+  color: #4b5563;
+}
+
+.page-content h2 {
+  font-size: clamp(32px, 5vw, 52px);
+
+  margin-bottom: 30px;
+}
+
+.page-content h3 {
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.page-content p {
+  font-size: 19px;
+  line-height: 1.9;
+
+  color: var(--slate);
+
+  margin-bottom: 24px;
+}
+
+@media (max-width: 800px) {
+
+  .page-content {
+    text-align: center;
+    padding: 100px 24px 70px;
+  }
+
+  .page-hero {
+    padding: 100px 24px 70px;
+  }
+
+}

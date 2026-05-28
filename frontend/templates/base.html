@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{% block title %}{% endblock %}</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="icon" href="/static/images/logo/favicon.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@100..900&display=swap" rel="stylesheet">
+
+  <!-- jsPDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/banner.css') }}">
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/about.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/price.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/faq.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/schedule.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/animate-title.css') }}">
+
+  {% block head %}{% endblock %}
+</head>
+
+<body>
+  <header>
+    <div class="nav-container">
+      
+      <!-- BRAND -->
+      <a href="/" class="brand">
+        <img class="brand-image" src="/static/images/logo/logo_secondary_inverted.png" alt="Ballard Grappling Club Logo">
+        <span class="brand-text">Ballard Grappling Club</span>
+      </a>
+      
+      <!-- HAMBURGER -->
+      <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      
+      <!-- NAV -->
+      <nav class="nav" id="nav">
+        <a href="/about">About</a>
+        <a href="/price">Price</a>
+        <a href="/schedule">Schedule</a>
+        <a href="/faq">FAQ</a>
+        {% if session.get("token") %}
+        <a href="/dashboard">Dashboard</a>
+        <a href="/signout">Sign Out</a>
+        {% else %}
+        <a href="/signin">Sign In</a>
+        <a href="/register" class="cta">Join Now</a>
+        {% endif %}
+      </nav>
+      
+    </div>
+    {% include "banner.html" %}
+  </header>
+  
+  
+  <div class="block-content">
+    <div style="height: 74px;"></div>
+    {% block content %}{% endblock %}
+    
+    {% block scripts %}{% endblock %}
+  </div>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-container">
+        {% for category, message in messages %}
+          <div class="flash {{ category }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+<footer>
+  <div class="footer-container">
+
+    <div class="footer-brand">
+      <a href="/">
+        <img src="/static/images/logo/logo_secondary_inverted.png" alt="Ballard Grappling Club Logo">
+      </a>
+
+      <p>
+        Brazilian Jiu-Jitsu, wrestling, and submission grappling
+        in the heart of Ballard.
+      </p>
+    </div>
+
+    <div class="footer-links">
+      <h4>Navigation</h4>
+
+      <a href="/about">About</a>
+      <a href="/price">Price</a>
+      <a href="/schedule">Schedule</a>
+      <a href="/faq">FAQ</a>
+      <a href="https://www.fuelhousegym.com/">FUELhouse</a>
+
+    </div>
+
+    <!-- CONTACT -->
+    <div class="footer-contact">
+      <h4>Contact</h4>
+
+      <p>
+        <a href="https://maps.app.goo.gl/DHsqoGK2VYL1yKsk9" target="_blank">
+          4027 Leary Way NW<br>
+          Seattle, WA 98107
+        </a>
+      </p>
+
+      <p>
+        <a href="mailto:info@ballardgrapplingclub.com" target="_blank">info@ballardgrappling.com</a>
+        <br>
+        (206) 569-4520
+      </p>
+    </div>
+
+    <!-- SOCIAL -->
+    <div class="footer-social">
+      <h4>Follow Us</h4>
+
+      <a href="https://instagram.com" target="_blank">
+        Instagram
+      </a>
+
+      <a href="https://facebook.com" target="_blank">
+        Facebook
+      </a>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    © 2026 Ballard Grappling Club. All rights reserved.
+  </div>
+</footer>
+  
+  </body>
+
+<script>
+ const menuToggle = document.getElementById("menuToggle");
+const nav = document.getElementById("nav");
+
+menuToggle.addEventListener("click", () => {
+  menuToggle.classList.toggle("active");
+  nav.classList.toggle("active");
+});
+</script>
+
+</html>

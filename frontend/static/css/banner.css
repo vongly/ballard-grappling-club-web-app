@@ -1,0 +1,137 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;600;700&display=swap');
+
+.soft-opening-banner {
+  width: 100%;
+
+  background: linear-gradient(135deg, #111111, #1f1f1f);
+  font-family: 'Inter', sans-serif;
+
+  /* remove separation feel */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+
+}
+
+/* NOW behaves like part of header container system */
+.soft-opening-banner-content {
+  width: 100%;
+  max-width: 1200px;
+
+  margin: 0 auto;
+  padding: 10px 20px;  /* tighter = more “header-like” */
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  text-align: center;
+
+}
+
+/* inline content row */
+.soft-opening-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+
+  gap: 14px;
+}
+
+/* badge */
+.soft-opening-pill {
+  display: inline-flex;
+  padding: 5px 10px;
+
+  border-radius: 999px;
+  background: #d4af37;
+  color: #111;
+
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+
+  flex-shrink: 0;
+}
+
+/* headline */
+.soft-opening-title {
+  margin: 0;
+
+  font-family: 'Bebas Neue', sans-serif;
+  font-weight: 400;
+
+  font-size: 1.9rem; /* slightly smaller = header integration */
+  letter-spacing: 1px;
+  text-transform: uppercase;
+
+  color: #ffffff;
+  line-height: 1;
+
+  white-space: nowrap;
+}
+
+/* subtitle */
+.soft-opening-subtitle {
+  margin: 0;
+
+  font-size: 0.95rem;
+  line-height: 1.4;
+
+  color: rgba(255, 255, 255, 0.75);
+
+  white-space: nowrap;
+}
+
+/* location link */
+.soft-opening-meta a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  font-size: 0.9rem;
+  font-weight: 600;
+
+  color: rgba(255, 255, 255, 0.75);
+  text-decoration: none;
+
+  white-space: nowrap;
+
+  transition: opacity 0.2s ease;
+}
+
+.soft-opening-meta a:hover {
+  opacity: 1;
+}
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 768px) {
+  .soft-opening-banner-content {
+    flex-direction: column;
+    text-align: center;
+  }
+  .soft-opening-banner-content {
+    padding: 12px 16px;
+  }
+
+  .soft-opening-text {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 8px;
+  }
+
+  .soft-opening-title {
+    white-space: normal; /* CRITICAL: prevents overflow */
+    font-size: 1.6rem;
+  }
+
+  .soft-opening-subtitle {
+    white-space: normal; /* CRITICAL */
+  }
+
+  .soft-opening-meta a {
+    white-space: normal;
+  }
+}

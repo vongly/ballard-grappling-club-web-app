@@ -1,0 +1,117 @@
+import sys
+from pathlib import Path
+import requests
+
+from flask import (
+    Flask,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    make_response,
+    flash,
+    session,
+)
+
+from routes.api.register import register_bp
+from routes.api.dashboard import dashboard_bp
+from routes.api.stripe import stripe_ui_bp
+
+sys.path.append(str(Path(__file__).resolve().parents[2]))
+
+from env import API_BASE
+
+
+def api_get(path):
+    try:
+        res = requests.get(
+            f"{API_BASE}{path}",
+            timeout=10,
+        )
+
+        if res.status_code == 401:
+            return "UNAUTHORIZED"
+
+        if res.status_code != 200:
+            return None
+
+        return res.json()
+
+    except requests.RequestException:
+        return None
+
+def require_auth():
+    token = session.get("token")
+    if not token:
+        return redirect(url_for("signin"))
+    return None
+
+def redirect_if_authenticated():
+    if session.get("token"):
+        return redirect(url_for("dashboard.dashboard"))
+    return None
+
+app = Flask(__name__)
+app.secret_key = "dev-secret-key-change-me"
+
+@app.route("/")
+def home():
+    return render_template("home.html")
+
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
+@app.route("/price")
+def price():
+    products = api_get("/products") or []
+
+    active_products = [p for p in products if p.get("active") == 1]
+
+    return render_template("price.html", products=active_products)
+
+@app.route("/schedule")
+def schedule():
+    return render_template("schedule.html")
+
+@app.route("/faq")
+def faq():
+    return render_template("faq.html")
+
+@app.route("/signout")
+def signout():
+    session.clear()
+    return redirect(url_for("home"))
+
+@app.route("/signin", methods=["GET", "POST"])
+def signin():
+    redirect_response = redirect_if_authenticated()
+    if redirect_response:
+        return redirect_response
+    
+    if request.method == "GET":
+        return render_template("signin.html")
+
+    email = request.form.get("email")
+    password = request.form.get("password")
+
+    res = requests.post(
+        f"{API_BASE}/auth",
+        json={"email": email, "password": password}
+    )
+
+    if res.status_code != 200:
+        flash("Invalid login")
+        return redirect(url_for("signin"))
+
+    session["token"] = res.json().get("access_token")
+    return redirect(url_for("dashboard.dashboard"))
+
+app.register_blueprint(register_bp)
+app.register_blueprint(dashboard_bp)
+app.register_blueprint(stripe_ui_bp)
+
+print(app.url_map)
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5001, debug=True, use_reloader=False)
