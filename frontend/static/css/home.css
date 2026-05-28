@@ -1,27 +1,6 @@
-
-.hero {
-  background: var(--slate);
-  color: var(--bone);
-  padding: 80px 24px;
-  text-align: center;
-}
-
-.hero h2 {
-  font-size: 28px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  margin-bottom: 10px;
-}
-
-.hero p {
-  font-size: 13px;
-  letter-spacing: 2px;
-  opacity: 0.9;
-}
-
-.hero .highlight {
-  color: var(--red);
-}
+/* =========================
+   HERO HOME LAYOUT
+========================= */
 
 .hero-home {
   height: 100vh;
@@ -32,6 +11,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  background-image: url("https://www.transparenttextures.com/patterns/asfalt-dark.png");
 }
 
 .hero-home img {
@@ -41,29 +21,26 @@
 }
 
 @media (max-width: 1200px) {
-
   .hero-home img {
-
     width: 220%;
-
     margin-left: -60%;
-    margin-bottom: 20%;
-
+    margin-top: 20%;
+    margin-bottom: 10%;
     height: auto;
     object-fit: cover;
   }
-
 }
 
 @media (max-width: 800px) {
-
   .hero-home img {
     margin-bottom: 25%;
   }
-
 }
 
-/* 🌫️ fog / weather layer */
+/* =========================
+   MIST / FOG LAYER (STATIC)
+========================= */
+
 .mist-layer {
   position: absolute;
   inset: 0;
@@ -75,97 +52,26 @@
     radial-gradient(circle at 50% 100%, rgba(223,223,198,0.08), transparent 55%);
 }
 
-@media (max-width: 768px) {
-  .mist-layer {
-    background:
-      radial-gradient(circle at 50% 50%, rgba(223,223,198,0.08), transparent 60%);
-  }
-}
+/* =========================
+   LOGO WRAPPER
+========================= */
 
-
-/* logo wrapper */
 .logo-wrap {
   text-align: center;
-  z-index: 2;
 }
 
-/* main logo animation */
+
 .hero-logo {
-  width: 100vw;          /* full viewport width */
+  width: 100vw;
   height: auto;
   max-height: 90vh;
-
   object-fit: contain;
 
-  opacity: 0;
-  transform: scale(1.06);
+  opacity: 1;
+  transform: none;
 
-  filter:
-    blur(14px)
-    contrast(0.8)
-    brightness(0.9)
-    grayscale(1);
-
-  animation: weatherReveal 4.5s ease-out forwards;
-}
-/* tagline */
-.tagline {
-  margin-top: 18px;
-  font-size: 12px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: rgba(223,223,198,0.85);
-
-  opacity: 0;
-  animation: fadeIn 2s ease 2.5s forwards;
 }
 
-/* 🌫️ slow atmospheric drift */
-@keyframes drift {
-  0% {
-    transform: translateY(0px);
-  }
-  100% {
-    transform: translateY(-20px);
-  }
-}
-
-/* 🧼 weathered reveal animation */
-@keyframes weatherReveal {
-  0% {
-    opacity: 0;
-    transform: scale(1.12);
-    filter: blur(18px) grayscale(1) contrast(0.7) brightness(0.8);
-  }
-
-  40% {
-    opacity: 0.4;
-    filter: blur(10px) grayscale(0.8) contrast(0.85);
-  }
-
-  70% {
-    opacity: 0.8;
-    filter: blur(4px) grayscale(0.4) contrast(1);
-  }
-
-  100% {
-    opacity: 1;
-    transform: scale(1);
-    filter: blur(0px) grayscale(0) contrast(1);
-  }
-}
-
-/* fade in tagline */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
 
 /* mobile */
 @media (max-width: 800px) {

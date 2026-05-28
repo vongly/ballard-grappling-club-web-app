@@ -1,0 +1,45 @@
+/* =========================
+   HERO LOGO REVEAL
+========================= */
+
+.hero-logo {
+  animation: weatherReveal 4.5s ease-out forwards;
+}
+
+/* =========================
+   TAGLINE FADE IN
+========================= */
+
+.tagline {
+  animation: fadeIn 2s ease 2.5s forwards;
+}
+
+/* =========================
+   KEYFRAMES
+========================= */
+
+@keyframes weatherReveal {
+  0% {
+    opacity: 0;
+    transform: scale(1.06);
+    filter: blur(14px) contrast(0.8) brightness(0.9) grayscale(1);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0px) contrast(1) brightness(1) grayscale(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
