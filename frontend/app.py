@@ -58,6 +58,10 @@ app.secret_key = "dev-secret-key-change-me"
 def home():
     return render_template("home.html")
 
+@app.route("/comingsoon")
+def comingsoon():
+    return render_template("comingsoon.html")
+
 @app.route("/about")
 def about():
     return render_template("about.html")

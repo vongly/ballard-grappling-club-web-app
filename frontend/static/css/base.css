@@ -233,18 +233,23 @@ header {
     transform: translateX(-50%);
     margin-top: 3px;
   }
-  
+
+  .brand-text {
+    font-size: 16px;
+  }
+
   .brand img {
     height: 65px;
     width: auto;
   }
 
   .brand-image {
-    margin-left: -7% ;
+    margin-left: -9% ;
   }
 
   /* hamburger RIGHT */
   .menu-toggle {
+    columns: var(--bone);
     display: block;
     position: absolute;
     right: 16px;
@@ -662,6 +667,7 @@ footer {
   color: white;
   transform: translateX(3px);
 }
+
 
 /* contact */
 .footer-contact p {
