@@ -63,7 +63,6 @@ header {
   z-index: 999;
   background: var(--slate);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  opacity: 0.95;
 }
 
 .nav-container {
@@ -607,9 +606,6 @@ footer {
   color: var(--bone);
   padding-top: 60px;
   padding-inline: 10%;
-  opacity: 0.93;
-
-
 }
 
 /* layout */

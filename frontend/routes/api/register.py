@@ -15,7 +15,10 @@ register_bp = Blueprint("register", __name__)
 @register_bp.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "GET":
-        return render_template("register.html")
+        return render_template(
+            "register.html",
+            ENDPOINT=ENDPOINT,
+        )
 
     data = {
         "first": request.form.get("first"),
