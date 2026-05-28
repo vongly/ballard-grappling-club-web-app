@@ -12,7 +12,7 @@ sys.path.append(str(Path(__file__).resolve().parents[1]))
 from db.models import Student, Product, Subscription
 from db.database import SessionLocal
 
-sys.path.append(str(Path(__file__).resolve().parents[3]))
+sys.path.append(str(Path(__file__).resolve().parents[2]))
 
 from env import STRIPE_KEY, FRONTEND_URL, TRIAL_LENGTH
 
@@ -204,45 +204,3 @@ class StripeServices:
 if __name__ == '__main__':
     stripe_call = StripeServices(api_key=STRIPE_KEY, db=SessionLocal())
     stripe_call.sync_products()
-#    url = stripe_call.create_checkout(
-#        student_id=1,
-#        product_id=4,
-#        frontend_url=f'{FRONTEND_URL}/stripe/checkout',
-#    )
-#    print(url)
-    pass
-    '''
-    [
-        {
-            'product_id': 'prod_UYsVyTok0vswY1',
-            'description': None,
-            'name': 'Drop-In',
-            'currency': 'usd',
-            'price_id': 'price_1TZkkXGVqqodSboAhpexgjmM',
-            'recurring': 0,
-            'unit_amount': 2500
-            'active': 1,
-        },
-        {
-            'product_id': 'prod_UYsVMSI0Jkvq46',
-            'description': None,
-            'name': 'Adult 1 Day/Week',
-            'currency': 'usd',
-            'price_id': 'price_1TZkkKGVqqodSboA2JGOQ8Kv',
-            'recurring': 1,
-            'unit_amount': 5000
-            'active': 1,
-        },
-        {
-            'product_id': 'prod_UYsVfepxzJnOcJ',
-            'description': None,
-            'name': 'Adult Unlimited',
-            'currency': 'usd',
-            'price_id': 'price_1TZkk4GVqqodSboAPlxfi9Ri',
-            'recurring': 1,
-            'unit_amount': 8500
-            'active': 1,
-        }
-    ]
-            
-    '''

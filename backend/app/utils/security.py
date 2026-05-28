@@ -13,7 +13,7 @@ from fastapi.security import OAuth2PasswordBearer
 from db.database import SessionLocal
 from db.models import Student
 
-sys.path.append(str(Path(__file__).resolve().parents[1]))
+sys.path.append(str(Path(__file__).resolve().parents[2]))
 
 from env import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
 

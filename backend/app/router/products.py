@@ -11,8 +11,6 @@ sys.path.append(str(Path(__file__).resolve().parents[1]))
 from db.database import SessionLocal, get_db
 from db.models import Product
 
-sys.path.append(str(Path(__file__).resolve().parents[2]))
-
 
 router = APIRouter()
 

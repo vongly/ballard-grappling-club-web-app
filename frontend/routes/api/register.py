@@ -4,7 +4,7 @@ from pathlib import Path
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 import requests
 
-sys.path.append(str(Path(__file__).resolve().parents[3]))
+sys.path.append(str(Path(__file__).resolve().parents[2]))
 
 from env import API_BASE
 

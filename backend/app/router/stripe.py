@@ -18,7 +18,6 @@ sys.path.append(str(Path(__file__).resolve().parents[2]))
 from env import STRIPE_KEY, FRONTEND_URL
 
 
-
 router = APIRouter()
 
 class CheckoutPayload(BaseModel):

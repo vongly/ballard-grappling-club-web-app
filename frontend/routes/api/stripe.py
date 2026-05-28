@@ -5,7 +5,7 @@ import requests
 import stripe
 from flask import Blueprint, request, render_template
 
-sys.path.append(str(Path(__file__).resolve().parents[3]))
+sys.path.append(str(Path(__file__).resolve().parents[2]))
 
 from env import STRIPE_KEY, API_BASE
 
