@@ -24,23 +24,15 @@
               <span class="plan-type" style="color: green">
                 {{ subscription_product.name }}
               </span>
+            {% elif subscription.classes_available > 0 %}
+              <span class="plan-type" style="color: green">
+                {{ subscription.classes_available }} Classes Available
+              </span>
             {% else %}
               <span class="plan-type" style="color: red">
-                No Active Subscription
+                Inactive Subscription
               </span>
             {% endif %}
-
-            <div>
-              {% if subscription.classes_purchased and subscription.classes_purchased > 0 %}
-                <span class="plan-type" style="color: green">
-                  {{ subscription.classes_purchased }} Classes Available
-                <span>
-              {% elif subscription.status == 0 %}
-                <span class="plan-type" style="color: red">
-                  0 Classes Available
-                <span>
-              {% endif %}
-            </div>
 
           {% else %}
             <span class="plan-type" style="color: red">
