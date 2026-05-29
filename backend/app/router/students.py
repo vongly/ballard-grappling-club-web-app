@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
 import boto3
+from botocore.client import Config
 from io import BytesIO
 from PIL import Image
 
@@ -33,6 +34,7 @@ from env import (
     S3_URL,
     S3_ACCESS_KEY,
     S3_SECRET_KEY,
+    S3_REGION,
 )
 
 router = APIRouter()
@@ -190,20 +192,28 @@ async def create_student(
 @router.get("/me")
 def get_me(student=Depends(get_current_student)):
 
-    S3_CLIENT = boto3.client(
-        's3',
-        endpoint_url=S3_URL,
-        aws_access_key_id=S3_ACCESS_KEY,
-        aws_secret_access_key=S3_SECRET_KEY,
-    )
+    client_kwargs = {
+        "service_name": "s3",
+        "endpoint_url": S3_URL,
+        "aws_access_key_id": S3_ACCESS_KEY,
+        "aws_secret_access_key": S3_SECRET_KEY,
+    }
 
-    presigned_url = S3_CLIENT.generate_presigned_url(
+    # Needed for DigitalOcean Spaces / AWS
+    # Usually optional for local MinIO
+    if S3_REGION:
+        client_kwargs["region_name"] = S3_REGION
+        client_kwargs["config"] = Config(signature_version="s3v4")
+
+    s3_client = boto3.client(**client_kwargs)
+
+    presigned_url = s3_client.generate_presigned_url(
         "get_object",
         Params={
             "Bucket": BUCKET_NAME,
-            "Key": student.photo_url
+            "Key": student.photo_url.lstrip("/"),
         },
-        ExpiresIn=3600
+        ExpiresIn=3600,
     )
 
     student.presigned_url = presigned_url
