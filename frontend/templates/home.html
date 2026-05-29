@@ -2,6 +2,10 @@
 
 {% block title %}Ballard Grappling{% endblock %}
 
+{% block head %}
+  <link rel="preload" as="logo_main_compass" href="/static/images/logo/logo_main_compass.svg">
+{% endblock %}
+
 {% block content %}
 
   <div class="hero-home">
@@ -11,7 +15,7 @@
 
     <!-- logo container -->
     <div class="logo-wrap">
-      <img src="/static/images/logo/logo_main_compass.png" alt="Ballard Grappling Club Logo" class="hero-logo"/>
+      <img src="/static/images/logo/logo_main_compass.svg" alt="Ballard Grappling Club Logo" class="hero-logo"/>
     </div>
 
   </div>

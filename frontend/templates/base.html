@@ -25,6 +25,7 @@
 
   <link rel="stylesheet" href="{{ url_for('static', filename='css/animate-title.css') }}">
 
+  <link rel="preload" as="logo_secondary_inverted" href="/static/images/logo/logo_secondary_inverted.svg">
   {% block head %}{% endblock %}
 </head>
 
@@ -34,7 +35,7 @@
       
       <!-- BRAND -->
       <a href="/" class="brand">
-        <img class="brand-image" src="/static/images/logo/logo_secondary_inverted.png" alt="Ballard Grappling Club Logo">
+        <img class="brand-image" src="/static/images/logo/logo_secondary_inverted.svg" alt="Ballard Grappling Club Logo">
         <span class="brand-text">Ballard Grappling Club</span>
       </a>
       
