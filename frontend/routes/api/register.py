@@ -112,6 +112,7 @@ def register():
         # optional: store token in session
         # session["token"] = result["access_token"]
 
+        flash("Registration successful! Please Sign in.", "success")
         return redirect(url_for("signin"))
 
     except requests.RequestException as e:

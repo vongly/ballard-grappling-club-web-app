@@ -165,7 +165,15 @@
     <!-- ================= SIGNATURE ================= -->
     <div class="section">
       <h3>Signature</h3>
-  
+
+      <div class="row">
+        <div class="field">
+          <label>Undersigned *</label>
+          <input name="undersigned">
+          <div id="err-undersigned" class="error"></div>
+        </div>
+      </div>
+
       <div class="center-mobile">
         <div class="signature-wrapper">
           <canvas id="sig"></canvas>
@@ -198,12 +206,9 @@
   </form>
 </div>
 
-<script>
-  window.ENDPOINT = "{{ ENDPOINT }}";
-</script>
-
 {% endblock %}
 
 {% block scripts %}
+<script src="{{ url_for('static', filename='js/waiver.js') }}"></script>
 <script src="{{ url_for('static', filename='js/register.js') }}"></script>
 {% endblock %}

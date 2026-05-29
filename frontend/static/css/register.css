@@ -82,6 +82,7 @@ input:focus {
   font-size: 12px;
   margin-top: 4px;
   min-height: 14px;
+  display: block;
 }
 
 /* =========================

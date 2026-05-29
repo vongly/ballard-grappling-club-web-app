@@ -1,28 +1,4 @@
-const WAIVER = [
-  {
-    id: "risk",
-    title: "1. ASSUMPTION OF RISK",
-    body: [
-      "I understand that participation in martial arts involves physical contact.",
-      "I voluntarily assume all risks associated with training."
-    ],
-  },
-  {
-    id: "release",
-    title: "2. RELEASE OF LIABILITY",
-    body: [
-      "I release the gym, instructors, and affiliates from all liability.",
-      "This includes injury, accident, or loss arising from participation."
-    ],
-  },
-  {
-    id: "legal",
-    title: "3. MEDIA RELEASE",
-    body: [
-      "I grant permission for photos and video to be used for marketing."
-    ],
-  }
-];
+const WAIVER = window.WAIVER;
 
 /* ================= ERROR HELPERS ================= */
 
@@ -59,7 +35,7 @@ function renderPage() {
 
     div.innerHTML = `
       <h3>${section.title}</h3>
-      ${section.body.map(p => `<p>${p}</p>`).join("")}
+      ${section.body.map(p => `<p style="font-size: 10px;">${p}</p>`).join("")}
       <input type="text" name="${section.id}_initials" placeholder="Initials">
       <div id="err-${section.id}_initials" class="error"></div>
     `;
@@ -186,6 +162,7 @@ function validateForm(form) {
     "emergency_contact_name",
     "emergency_contact_relationship",
     "emergency_contact_phone",
+    "undersigned",
     "sign_date"
   ];
 
@@ -264,6 +241,24 @@ async function buildWaiverPDF(signatureBlob) {
 
   let y = 20;
 
+  const pageHeight = pdf.internal.pageSize.height;
+
+  function checkPageBreak(spaceNeeded) {
+    if (y + spaceNeeded > pageHeight - 20) {
+      pdf.addPage();
+      y = 20;
+    }
+  }
+
+  const signDate =
+    document.querySelector('[name="sign_date"]')?.value || "";
+
+  const undersigned =
+    document.querySelector('[name="undersigned"]')?.value || "";
+
+    const isParent =
+    document.querySelector('#isParent')?.checked || false;
+
   pdf.setFontSize(16);
   pdf.text("WAIVER AGREEMENT", 20, y);
   y += 10;
@@ -282,8 +277,12 @@ async function buildWaiverPDF(signatureBlob) {
 
     for (const line of section.body) {
       const wrapped = pdf.splitTextToSize(line, 170);
+      const height = wrapped.length * 5;
+
+      checkPageBreak(height);
+
       pdf.text(wrapped, 20, y);
-      y += wrapped.length * 5;
+      y += height;
     }
 
     pdf.text(`Initials: ${initials}`, 20, y);
@@ -296,11 +295,48 @@ async function buildWaiverPDF(signatureBlob) {
     reader.readAsDataURL(signatureBlob);
   });
 
-  pdf.addPage();
-  pdf.text("Signature", 20, 20);
-  pdf.addImage(sigData, "PNG", 20, 30, 160, 60);
+  checkPageBreak(80);
+  
+  pdf.setFont(undefined, "bold");
+  pdf.text("Undersigned:", 20, y);
+
+  pdf.setFont(undefined, "normal");
+  pdf.text(`${undersigned}`, 55, y);
+  
+  y += 6;
+
+  pdf.setFont(undefined, "bold");
+  pdf.text("Signature", 20, y);
+  pdf.setFont(undefined, "normal");
+
+  y += 6;
+
+  // 50% size signature (was 160x60 → now 80x30)
+  const sigWidth = 80;
+  const sigHeight = 40;
+
+  // Signature image
+  pdf.addImage(sigData, "PNG", 20, y, sigWidth, sigHeight);
+
+  y += sigHeight + 6;
+
+  // Parent/Guardian indicator (only if checked)
+  if (isParent) {
+    pdf.text("Signed as: Parent / Guardian", 20, y);
+    y += 6;
+  }
+
+  // Date (always last)
+  pdf.setFont(undefined, "bold");
+  pdf.text("Date:", 20, y);
+
+  pdf.setFont(undefined, "normal");
+  pdf.text(`${signDate}`, 55, y);
+
+  y += 15;
 
   return pdf.output("blob");
+
 }
 
 /* ================= SUBMIT ================= */
@@ -324,13 +360,17 @@ function initRegistrationForm() {
 
     if (!validateForm(form)) {
       updateSubmitState();
-      alert("Please complete all required fields");
+      const errorBox = document.getElementById("submit-error");
+      errorBox.innerText = "Please complete all required fields";
+      errorBox.style.display = "block";
       return;
     }
 
     submitBtn.disabled = true;
 
     try {
+      const errorBox = document.getElementById("submit-error");
+
       const sigBlob = await new Promise(resolve =>
         canvas.toBlob(resolve, "image/png")
       );
@@ -346,13 +386,37 @@ function initRegistrationForm() {
         body: formData,
       });
 
+      // clear old errors on each submit attempt
+      errorBox.innerText = "";
+      errorBox.style.display = "none";
+
       if (res.redirected) {
         window.location.href = res.url;
         return;
       }
 
       if (!res.ok) {
-        alert(data.detail || "Registration failed");
+        let message = "Registration failed";
+
+        // try to extract backend message
+        try {
+          const data = await res.json();
+
+          // 🔥 special case: 409 conflict (duplicate email)
+          if (res.status === 409) {
+            message = "An account with this email already exists. Please sign in instead.";
+          } else {
+            message = data.detail || message;
+          }
+
+        } catch (e) {
+          if (res.status === 409) {
+            message = "An account with this email already exists. Please sign in instead.";
+          }
+        }
+
+        errorBox.innerText = message;
+        errorBox.style.display = "block";
         return;
       }
 
@@ -360,10 +424,15 @@ function initRegistrationForm() {
 
     } catch (err) {
       console.error(err);
-      alert("Unexpected error occurred");
+
+      const errorBox = document.getElementById("submit-error");
+      errorBox.innerText = "Unexpected error occurred. Please try again.";
+      errorBox.style.display = "block";
+
     } finally {
       updateSubmitState();
     }
+
   }
 
   form.addEventListener("input", updateSubmitState);
