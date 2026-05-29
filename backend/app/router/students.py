@@ -196,36 +196,35 @@ def get_me(student=Depends(get_current_student)):
         if not value:
             return value
 
-        # If full URL → extract path
         if value.startswith("http"):
-            value = urlparse(value).path.lstrip("/")
+            parsed = urlparse(value)
+            value = parsed.path.lstrip("/")
 
-        # Remove leading slash
         value = value.lstrip("/")
 
-        # 🔥 FIX: aggressively remove ALL bucket repeats
-        while value.startswith(f"{BUCKET_NAME}/"):
-            value = value[len(BUCKET_NAME) + 1:]
+        prefix = f"{BUCKET_NAME}/"
+        while value.startswith(prefix):
+            value = value[len(prefix):]
 
         return value
 
-    s3_client = boto3.client(
-        "s3",
-        region_name=S3_REGION or "sfo2",
-        endpoint_url=S3_URL,
-        aws_access_key_id=S3_ACCESS_KEY,
-        aws_secret_access_key=S3_SECRET_KEY,
-        config=Config(
-            signature_version="s3v4",
-            s3={"addressing_style": "virtual"},
-        ),
-    )
+    client_kwargs = {
+        "service_name": "s3",
+        "endpoint_url": S3_URL,
+        "aws_access_key_id": S3_ACCESS_KEY,
+        "aws_secret_access_key": S3_SECRET_KEY,
+    }
+
+    if S3_REGION:
+        client_kwargs["region_name"] = S3_REGION
+        client_kwargs["config"] = Config(signature_version="s3v4")
+
+    s3_client = boto3.client(**client_kwargs)
 
     clean_key = normalize_s3_key(student.photo_url)
 
-    # 🔥 HARD SAFETY CHECK (prevents silent bad data)
-    if clean_key.startswith(f"{BUCKET_NAME}/"):
-        raise ValueError(f"Still contains bucket prefix: {clean_key}")
+    if BUCKET_NAME in clean_key:
+        raise ValueError(f"Invalid S3 key after normalization: {clean_key}")
 
     presigned_url = s3_client.generate_presigned_url(
         "get_object",
