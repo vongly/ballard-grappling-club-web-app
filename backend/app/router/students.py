@@ -25,7 +25,7 @@ from utils.security import (
 )
 import utils.helpers as helpers
 
-sys.path.append(str(Path(__file__).resolve().parents[2]))
+sys.path.append(str(Path(__file__).resolve().parents[1]))
 
 from env import (
     BUCKET_NAME,
@@ -34,7 +34,7 @@ from env import (
     S3_URL,
     S3_ACCESS_KEY,
     S3_SECRET_KEY,
-    S3_REGION,
+    S3_REGION
 )
 
 router = APIRouter()
@@ -199,8 +199,6 @@ def get_me(student=Depends(get_current_student)):
         "aws_secret_access_key": S3_SECRET_KEY,
     }
 
-    # Needed for DigitalOcean Spaces / AWS
-    # Usually optional for local MinIO
     if S3_REGION:
         client_kwargs["region_name"] = S3_REGION
         client_kwargs["config"] = Config(signature_version="s3v4")
