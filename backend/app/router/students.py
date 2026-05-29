@@ -39,7 +39,6 @@ from env import (
 
 router = APIRouter()
 
-
 @router.post('')
 async def create_student(
     first: str=Form(...),
@@ -191,6 +190,18 @@ async def create_student(
 
 @router.get("/me")
 def get_me(student=Depends(get_current_student)):
+    
+    def normalize_s3_key(key: str) -> str:
+        if not key:
+            return key
+
+        key = key.lstrip("/")
+
+        # remove accidental bucket prefix duplication
+        if key.startswith(f"{BUCKET_NAME}/"):
+            key = key[len(BUCKET_NAME) + 1:]
+
+        return key
 
     client_kwargs = {
         "service_name": "s3",
@@ -199,17 +210,20 @@ def get_me(student=Depends(get_current_student)):
         "aws_secret_access_key": S3_SECRET_KEY,
     }
 
+    # Only needed for AWS / DigitalOcean Spaces / MinIO compatibility consistency
     if S3_REGION:
         client_kwargs["region_name"] = S3_REGION
         client_kwargs["config"] = Config(signature_version="s3v4")
 
     s3_client = boto3.client(**client_kwargs)
 
+    clean_key = normalize_s3_key(student.photo_url)
+
     presigned_url = s3_client.generate_presigned_url(
         "get_object",
         Params={
             "Bucket": BUCKET_NAME,
-            "Key": student.photo_url.lstrip("/"),
+            "Key": clean_key,
         },
         ExpiresIn=3600,
     )
