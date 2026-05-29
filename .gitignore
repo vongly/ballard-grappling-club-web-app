@@ -3,7 +3,7 @@ test.json
 docker-compose.yml
 
   
-almebic.ini
+*alembic.ini
 
 # =========================
 # ENV / SECRETS
