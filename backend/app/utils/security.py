@@ -15,7 +15,10 @@ from db.models import Student
 
 sys.path.append(str(Path(__file__).resolve().parents[2]))
 
-from env import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
+from env import SECRET_KEY, ALGORITHM
+
+
+ACCESS_TOKEN_EXPIRE_MINUTES = 2880
 
 pwd_context = CryptContext(schemes=['argon2'], deprecated='auto')
 
