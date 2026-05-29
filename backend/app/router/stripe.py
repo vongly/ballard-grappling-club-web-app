@@ -15,7 +15,7 @@ from utils.security import get_current_student, get_current_superuser
 
 sys.path.append(str(Path(__file__).resolve().parents[2]))
 
-from env import STRIPE_KEY, FRONTEND_URL
+from env import STRIPE_KEY, FRONTEND_URL_PUBLIC
 
 
 router = APIRouter()
@@ -43,7 +43,7 @@ def checkout(
     session = stripe_service.create_checkout(
         student_id=student.id,
         product_id=product.id,
-        frontend_url=f'{FRONTEND_URL}/stripe/checkout',
+        frontend_url=f'{FRONTEND_URL_PUBLIC}/stripe/checkout',
     )
 
     return {

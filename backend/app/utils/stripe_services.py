@@ -14,7 +14,7 @@ from db.database import SessionLocal
 
 sys.path.append(str(Path(__file__).resolve().parents[2]))
 
-from env import STRIPE_KEY, FRONTEND_URL, TRIAL_LENGTH
+from env import STRIPE_KEY, TRIAL_LENGTH
 
 # times in utc
 now = datetime.now()

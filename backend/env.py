@@ -2,6 +2,7 @@ import os
 
 TRIAL_LENGTH = 7
 
+FRONTEND_URL_PUBLIC = os.getenv("FRONTEND_URL_PUBLIC")
 FRONTEND_URL = os.getenv("FRONTEND_URL")
 API_BASE = os.getenv("API_BASE")
 
