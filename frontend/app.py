@@ -19,7 +19,7 @@ from routes.api.stripe import stripe_ui_bp
 
 sys.path.append(str(Path(__file__).resolve().parents[2]))
 
-from env import API_BASE
+from env import API_BASE, SECRET_KEY
 
 
 def api_get(path):
@@ -52,7 +52,7 @@ def redirect_if_authenticated():
     return None
 
 app = Flask(__name__)
-app.secret_key = "dev-secret-key-change-me"
+app.secret_key = SECRET_KEY
 
 @app.route("/")
 def home():
