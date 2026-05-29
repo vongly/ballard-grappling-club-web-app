@@ -65,7 +65,10 @@ def dashboard():
     if not token:
         return redirect("/signin")
 
+    products = api_get("/products", token) or []
+    subscription_record = api_get("/subscriptions/me", token)
     student = api_get("/students/me", token)
+
     if student == "UNAUTHORIZED" or not student:
         session.clear()
         return redirect("/signin")
@@ -74,9 +77,6 @@ def dashboard():
     student["phone_formatted"] = format_phone(student["phone"])
     student["emergency_contact_phone_formatted"] = format_phone(student["emergency_contact_phone"])
 
-    subscription_record = api_get("/subscriptions/me", token)
-
-    products = api_get("/products", token) or []
 
     '''
     Checks for subscription record

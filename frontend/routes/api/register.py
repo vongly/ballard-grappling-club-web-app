@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
 
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 import requests
 
 sys.path.append(str(Path(__file__).resolve().parents[2]))
@@ -15,26 +15,21 @@ register_bp = Blueprint("register", __name__)
 @register_bp.route("/register", methods=["GET", "POST"])
 def register():
 
-    # ======================
-    # GET → render form
-    # ======================
     if request.method == "GET":
-        return render_template(
-            "register.html",
-            ENDPOINT=ENDPOINT,
-        )
-
-    # ======================
-    # POST → build payload
-    # ======================
+        return render_template("register.html")
 
     try:
-        # ----------------------
-        # 1. Extract form fields
-        # ----------------------
         required_fields = [
-            "first", "last", "password", "phone", "email",
-            "birthdate", "address_1", "city", "state", "zipcode",
+            "first",
+            "last",
+            "password",
+            "phone",
+            "email",
+            "birthdate",
+            "address_1",
+            "city",
+            "state",
+            "zipcode",
             "emergency_contact_name",
             "emergency_contact_relationship",
             "emergency_contact_phone",
@@ -51,12 +46,8 @@ def register():
 
             data[field] = value
 
-        # optional field
         data["address_2"] = request.form.get("address_2")
 
-        # ----------------------
-        # 2. Extract files
-        # ----------------------
         profile = request.files.get("profile_picture")
         waiver = request.files.get("waiver_pdf") or request.files.get("waiver")
 
@@ -81,19 +72,13 @@ def register():
             ),
         }
 
-        # ----------------------
-        # 3. Send to FastAPI
-        # ----------------------
         response = requests.post(
-            ENDPOINT,
+            f'{API_BASE}/students',
             data=data,
             files=files,
-            timeout=30
+            timeout=30,
         )
 
-        # ----------------------
-        # 4. Handle response
-        # ----------------------
         if response.status_code == 409:
             flash("Account already exists", "error")
             return {"error": "Account already exists"}, 409
@@ -109,11 +94,20 @@ def register():
 
         result = response.json()
 
-        # optional: store token in session
-        # session["token"] = result["access_token"]
+        email = data["email"]
+        password = data["password"]
 
-        flash("Registration successful! Please Sign in.", "success")
-        return redirect(url_for("signin"))
+        res = requests.post(
+            f"{API_BASE}/auth",
+            json={"email": email, "password": password}
+        )
+
+        if res.status_code != 200:
+            flash("Invalid login")
+            return redirect(url_for("signin"))
+
+        session["token"] = res.json().get("access_token")
+        return redirect(url_for("dashboard.dashboard"))
 
     except requests.RequestException as e:
         flash(f"Network error: {str(e)}", "error")

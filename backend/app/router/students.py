@@ -191,7 +191,7 @@ async def create_student(
     }
 
 @router.get("/me")
-def get_me(student=Depends(get_current_student)):
+async def get_me(student=Depends(get_current_student)):
 
     client_kwargs = {
         "service_name": "s3",

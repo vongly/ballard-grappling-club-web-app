@@ -20,7 +20,7 @@ router = APIRouter()
 
 
 @router.post("/", response_model=Out)
-def create_transaction(payload: Create, db: Session = Depends(get_db)):
+async def create_transaction(payload: Create, db: Session = Depends(get_db)):
 
     existing = db.query(Transaction).filter(
         Transaction.stripe_checkout_session_id == payload.stripe_checkout_session_id
@@ -84,7 +84,7 @@ def get_transactions(
 
 
 @router.get("/{transaction_id}", response_model=Out)
-def get_transaction(transaction_id: int, db: Session = Depends(get_db)):
+async def get_transaction(transaction_id: int, db: Session = Depends(get_db)):
 
     transaction = db.query(Transaction).filter(
         Transaction.id == transaction_id

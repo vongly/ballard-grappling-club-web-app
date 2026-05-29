@@ -22,7 +22,7 @@ router = APIRouter()
 
 
 @router.get("/", response_model=List[Out] | None)
-def get_all_subscriptions(
+async def get_all_subscriptions(
     db: Session = Depends(get_db),
     _: Student = Depends(get_current_superuser),
 
@@ -51,7 +51,7 @@ def get_all_subscriptions(
     return query.offset(skip).limit(limit).all()
 
 @router.get("/{sub_id:int}", response_model=Out | None)
-def get_subscription_by_id(
+async def get_subscription_by_id(
     sub_id: int,
     db: Session = Depends(get_db),
     _: Student = Depends(get_current_superuser),
@@ -62,7 +62,7 @@ def get_subscription_by_id(
     return sub
 
 @router.get("/me", response_model=Out | None)
-def get_my_subscription(
+async def get_my_subscription(
     db: Session = Depends(get_db),
     student: Student = Depends(get_current_student),
 ):
