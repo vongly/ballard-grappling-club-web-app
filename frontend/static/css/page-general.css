@@ -11,7 +11,7 @@
   max-width: 900px;
   margin: 0 auto;
 
-  padding: 140px 30px 100px;
+  padding: 80px 30px 100px;
 
   text-align: center;
 }
@@ -29,6 +29,7 @@
 
   color: #4b5563;
 }
+
 
 .page-content h2 {
   font-size: clamp(32px, 5vw, 52px);
@@ -54,7 +55,7 @@
 
   .page-content {
     text-align: center;
-    padding: 100px 24px 70px;
+    padding: 10px 24px 10px;
   }
 
   .page-hero {

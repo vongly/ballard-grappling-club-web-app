@@ -4,7 +4,7 @@
   --bone: #efefe8;
   --bone-off: #eaeae4;
   --red: #de3838;
-  --bone-light: #ecece6;
+  --bone-light: #f1f1ec;
 }
 
 /* =========================
@@ -24,7 +24,7 @@
 
 body {
   top: 74px;
-  background: var(--bone);
+  background: var(--bone-light);
   color: var(--slate);
   margin: 0;
   

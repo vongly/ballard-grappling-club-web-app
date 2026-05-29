@@ -5,7 +5,7 @@
 .pricing-container {
   max-width: 1000px;
   margin: auto auto 0 auto;
-  padding: 0 20px;
+  padding: 0 20px 60px;
 
   display: grid;
   grid-template-columns: repeat(2, 2fr);
