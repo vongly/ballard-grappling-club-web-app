@@ -1,6 +1,7 @@
 import sys
 from pathlib import Path
 from datetime import date, datetime
+from urllib.parse import urlparse
 
 from fastapi import APIRouter, UploadFile, File, Form, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -190,18 +191,25 @@ async def create_student(
 
 @router.get("/me")
 def get_me(student=Depends(get_current_student)):
-    
-    def normalize_s3_key(key: str) -> str:
-        if not key:
-            return key
 
-        key = key.lstrip("/")
+    def normalize_s3_key(value: str) -> str:
+        if not value:
+            return value
 
-        # remove accidental bucket prefix duplication
-        if key.startswith(f"{BUCKET_NAME}/"):
-            key = key[len(BUCKET_NAME) + 1:]
+        # Case 1: full URL → extract path
+        if value.startswith("http"):
+            parsed = urlparse(value)
+            value = parsed.path.lstrip("/")
 
-        return key
+        # Case 2: strip leading slash
+        value = value.lstrip("/")
+
+        # Case 3: repeatedly remove duplicated bucket prefix
+        prefix = f"{BUCKET_NAME}/"
+        while value.startswith(prefix):
+            value = value[len(prefix):]
+
+        return value
 
     client_kwargs = {
         "service_name": "s3",
@@ -210,7 +218,6 @@ def get_me(student=Depends(get_current_student)):
         "aws_secret_access_key": S3_SECRET_KEY,
     }
 
-    # Only needed for AWS / DigitalOcean Spaces / MinIO compatibility consistency
     if S3_REGION:
         client_kwargs["region_name"] = S3_REGION
         client_kwargs["config"] = Config(signature_version="s3v4")
@@ -218,6 +225,10 @@ def get_me(student=Depends(get_current_student)):
     s3_client = boto3.client(**client_kwargs)
 
     clean_key = normalize_s3_key(student.photo_url)
+
+    # safety check (VERY useful for debugging)
+    if BUCKET_NAME in clean_key:
+        raise ValueError(f"Invalid S3 key after normalization: {clean_key}")
 
     presigned_url = s3_client.generate_presigned_url(
         "get_object",
@@ -228,6 +239,8 @@ def get_me(student=Depends(get_current_student)):
         ExpiresIn=3600,
     )
 
-    student.presigned_url = presigned_url
+    # safer than mutating ORM object directly (optional but recommended)
+    result = student.__dict__.copy()
+    result["presigned_url"] = presigned_url
 
-    return student
+    return result
