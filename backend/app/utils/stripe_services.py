@@ -1,6 +1,6 @@
 import sys
 from pathlib import Path
-from datetime import datetime, date, timedelta
+from datetime import datetime, date, timedelta, timezone
 from dateutil.relativedelta import relativedelta
 
 import stripe
@@ -16,10 +16,12 @@ sys.path.append(str(Path(__file__).resolve().parents[2]))
 
 from env import STRIPE_KEY, FRONTEND_URL, TRIAL_LENGTH
 
+# times in utc
 now = datetime.now()
 FIRST_DAY_NEXT_MONTH = (
-    now.replace(day=1) + relativedelta(months=1)
+    now.replace(day=1, hour=10) + relativedelta(months=1)
 )
+LAUNCH_TIMESTAMP = datetime(2026, 6, 1, 11, 0, 0)
 
 
 class StripeServices:
@@ -131,7 +133,7 @@ class StripeServices:
             self.db.refresh(subscription)
         return customer
 
-    def create_checkout(self, student_id: int, product_id: int, frontend_url: str, first_day_next_month=FIRST_DAY_NEXT_MONTH):
+    def create_checkout(self, student_id: int, product_id: int, frontend_url: str, first_day_next_month=FIRST_DAY_NEXT_MONTH, launch_timestamp=LAUNCH_TIMESTAMP):
 
         student = self.db.query(Student).filter(Student.id == student_id).first()
         product = self.db.query(Product).filter(Product.id == product_id).first()
@@ -163,12 +165,20 @@ class StripeServices:
             "cancel_url": f"{frontend_url}/cancel",
         }
 
+
         # 3. ONLY add subscription_data if needed (optional)
-        if mode == "subscription" and first_day_next_month:
-            checkout_data["subscription_data"] = {
-                "billing_cycle_anchor": first_day_next_month,
-                "proration_behavior": "create_prorations"
-            }
+        if mode == "subscription" and first_day_next_month and launch_timestamp:
+            if now < LAUNCH_TIMESTAMP:
+                # PRE-LAUNCH: no billing until launch
+                checkout_data["subscription_data"] = {
+                    "trial_end": int(LAUNCH_TIMESTAMP.timestamp())
+                }
+            else:
+                # POST-LAUNCH: normal billing - no trial
+                checkout_data["subscription_data"] = {
+                    "billing_cycle_anchor": first_day_next_month,
+                    "proration_behavior": "create_prorations"
+                }
 
         session = stripe.checkout.Session.create(**checkout_data)
 
