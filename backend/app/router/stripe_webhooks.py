@@ -100,7 +100,16 @@ async def update_subscription(
             recurring = 1 if item["price"]["type"] == "recurring" else 0
             status = data["status"]
 
-            if status == 'active' and recurring == 1:
+            if status in ['active'] and recurring == 1:
+                subscription = (db.query(Subscription).filter(Subscription.stripe_customer_id == stripe_customer_id).first())
+
+                subscription.stripe_subscription_id = stripe_subscription_id
+                subscription.stripe_price_id = stripe_price_id
+                subscription.status = 1
+
+                db.commit()
+
+            elif status in ['trialing'] and recurring == 1:
                 subscription = (db.query(Subscription).filter(Subscription.stripe_customer_id == stripe_customer_id).first())
 
                 subscription.stripe_subscription_id = stripe_subscription_id
