@@ -14,69 +14,111 @@ register_bp = Blueprint("register", __name__)
 
 @register_bp.route("/register", methods=["GET", "POST"])
 def register():
+
+    # ======================
+    # GET → render form
+    # ======================
     if request.method == "GET":
         return render_template(
             "register.html",
             ENDPOINT=ENDPOINT,
         )
 
-    data = {
-        "first": request.form.get("first"),
-        "last": request.form.get("last"),
-        "password": request.form.get("password"),
-        "phone": request.form.get("phone"),
-        "email": request.form.get("email"),
-        "birthdate": request.form.get("birthdate"),
-        "address_1": request.form.get("address_1"),
-        "address_2": request.form.get("address_2"),
-        "city": request.form.get("city"),
-        "state": request.form.get("state"),
-        "zipcode": request.form.get("zipcode"),
-        "emergency_contact_name": request.form.get("emergency_contact_name"),
-        "emergency_contact_relationship": request.form.get("emergency_contact_relationship"),
-        "emergency_contact_phone": request.form.get("emergency_contact_phone"),
-    }
+    # ======================
+    # POST → build payload
+    # ======================
 
-    files = {}
+    try:
+        # ----------------------
+        # 1. Extract form fields
+        # ----------------------
+        required_fields = [
+            "first", "last", "password", "phone", "email",
+            "birthdate", "address_1", "city", "state", "zipcode",
+            "emergency_contact_name",
+            "emergency_contact_relationship",
+            "emergency_contact_phone",
+        ]
 
-    profile = request.files.get("profile_picture")
-    waiver = request.files.get("waiver")
+        data = {}
 
-    if profile and profile.filename:
-        files["profile_picture"] = (
-            profile.filename,
-            profile.stream,
-            profile.mimetype
+        for field in required_fields:
+            value = request.form.get(field)
+
+            if not value:
+                flash(f"{field} is required", "error")
+                return {"error": "Account already exists"}, 409
+
+            data[field] = value
+
+        # optional field
+        data["address_2"] = request.form.get("address_2")
+
+        # ----------------------
+        # 2. Extract files
+        # ----------------------
+        profile = request.files.get("profile_picture")
+        waiver = request.files.get("waiver_pdf") or request.files.get("waiver")
+
+        if not profile or not profile.filename:
+            flash("Profile picture is required", "error")
+            return {"error": "Account already exists"}, 409
+
+        if not waiver or not waiver.filename:
+            flash("Waiver PDF is required", "error")
+            return {"error": "Account already exists"}, 409
+
+        files = {
+            "profile_picture": (
+                profile.filename,
+                profile.stream,
+                profile.mimetype,
+            ),
+            "waiver": (
+                waiver.filename,
+                waiver.stream,
+                waiver.mimetype,
+            ),
+        }
+
+        # ----------------------
+        # 3. Send to FastAPI
+        # ----------------------
+        response = requests.post(
+            ENDPOINT,
+            data=data,
+            files=files,
+            timeout=30
         )
 
-    if waiver and waiver.filename:
-        files["waiver"] = (
-            waiver.filename,
-            waiver.stream,
-            waiver.mimetype
-        )
+        # ----------------------
+        # 4. Handle response
+        # ----------------------
+        if response.status_code == 409:
+            flash("Account already exists", "error")
+            return {"error": "Account already exists"}, 409
 
-    response = requests.post(
-        ENDPOINT,
-        data=data,
-        files=files
-    )
+        if not response.ok:
+            try:
+                error_msg = response.json().get("detail", "Unknown error")
+            except Exception:
+                error_msg = response.text
 
-    print("STATUS:", response.status_code)
-    print("RESPONSE:", response.text)
+            flash(f"Registration failed: {error_msg}", "error")
+            return {"error": "Account already exists"}, 409
 
-    if response.status_code == 409:
-        flash("An account with this email already exists. Please log in.", "error")
-        return redirect(url_for("login"))
+        result = response.json()
 
-    if not response.ok:
-        flash(f"Registration failed: {response.json().get('detail', 'Unknown error')}", "error")
-        return redirect(url_for("register"))
+        # optional: store token in session
+        # session["token"] = result["access_token"]
 
-    if not response.ok:
-        # something went wrong
-        return f"Registration failed: {response.text}", 400
+        return redirect(url_for("signin"))
 
-    # success → go to success page
-    return redirect(url_for("register.success"))
+    except requests.RequestException as e:
+        flash(f"Network error: {str(e)}", "error")
+        return {"error": "Account already exists"}, 409
+
+    except Exception as e:
+        flash(f"Unexpected error: {str(e)}", "error")
+        return {"error": "Account already exists"}, 409
 

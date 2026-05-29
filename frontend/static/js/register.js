@@ -1,5 +1,3 @@
-const API = `${window.ENDPOINT}`;
-
 const WAIVER = [
   {
     id: "risk",
@@ -195,12 +193,14 @@ function validateForm(form) {
   requiredFields.forEach(name => {
     const input = form.querySelector(`[name="${name}"]`);
 
-    if (!input) return;
+    if (!input || input.disabled) return;
 
     const value =
-      input.type === "file"
-        ? input.files?.length
-        : input.value.trim();
+      input.disabled
+        ? true
+        : input.type === "file"
+          ? input.files?.length
+          : input.value?.trim();
 
     if (!value) {
       setError(name, "required");
@@ -305,62 +305,73 @@ async function buildWaiverPDF(signatureBlob) {
 
 /* ================= SUBMIT ================= */
 
-const form = document.getElementById("form");
+function initRegistrationForm() {
+  const form = document.getElementById("form");
+  const submitBtn = form?.querySelector('button[type="submit"]');
 
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
+  if (!form || !submitBtn) return;
 
-  if (!validateForm(form)) return;
+  function updateSubmitState() {
+    const isValid = validateForm(form);
 
-  const errorBox = document.getElementById("submit-error");
-  errorBox.innerText = "";
-  errorBox.style.color = "red";
+    submitBtn.disabled = !isValid;
+    submitBtn.style.opacity = isValid ? "1" : "0.5";
+    submitBtn.style.cursor = isValid ? "pointer" : "not-allowed";
+  }
 
-  try {
-    const signatureBlob = await new Promise(resolve =>
-      canvas.toBlob(resolve, "image/png")
-    );
+  async function handleSubmit(e) {
+    e.preventDefault();
 
-    const waiverBlob = await buildWaiverPDF(signatureBlob);
-
-    const waiverFile = new File([waiverBlob], "waiver.pdf", {
-      type: "application/pdf"
-    });
-
-    const formData = new FormData(form);
-
-    const profileInput = form.querySelector('input[name="profile_picture"]');
-    if (profileInput?.files?.[0]) {
-      formData.set("profile_picture", profileInput.files[0]);
-    }
-
-    formData.set("waiver", waiverFile);
-
-    const res = await fetch(API, {
-      method: "POST",
-      body: formData
-    });
-
-    if (!res.ok) {
-      let message = "Something went wrong. Please try again.";
-
-      try {
-        const data = await res.json();
-        message = data?.detail || message;
-      } catch {
-        const text = await res.text();
-        if (text) message = text;
-      }
-
-      errorBox.innerText = message;
+    if (!validateForm(form)) {
+      updateSubmitState();
+      alert("Please complete all required fields");
       return;
     }
 
-    // ✅ success
-    window.location.replace("/signin");
+    submitBtn.disabled = true;
 
-  } catch (err) {
-    console.error(err);
-    errorBox.innerText = "Unexpected error. Please try again.";
+    try {
+      const sigBlob = await new Promise(resolve =>
+        canvas.toBlob(resolve, "image/png")
+      );
+
+      const pdfBlob = await buildWaiverPDF(sigBlob);
+
+      const formData = new FormData(form);
+      formData.append("waiver_pdf", pdfBlob, "waiver.pdf");
+      formData.append("signature_image", sigBlob, "signature.png");
+
+      const res = await fetch("/register", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (res.redirected) {
+        window.location.href = res.url;
+        return;
+      }
+
+      if (!res.ok) {
+        alert(data.detail || "Registration failed");
+        return;
+      }
+
+      window.location.href = "/signin";
+
+    } catch (err) {
+      console.error(err);
+      alert("Unexpected error occurred");
+    } finally {
+      updateSubmitState();
+    }
   }
-});
+
+  form.addEventListener("input", updateSubmitState);
+  form.addEventListener("change", updateSubmitState);
+  form.addEventListener("submit", handleSubmit);
+
+  updateSubmitState();
+}
+
+document.addEventListener("DOMContentLoaded", initRegistrationForm);
+

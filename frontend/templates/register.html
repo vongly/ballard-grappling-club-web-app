@@ -4,6 +4,7 @@
 
 {% block content %}
 
+
 <div class="page-member">
   <div class="gap"></div>
   <h1 class="page-center">Registration</h1>
@@ -19,7 +20,7 @@
   
   <div style="height: 10px;"></div>
   
-  <form id="form" method="POST" action="/register" enctype="multipart/form-data">
+  <form id="form" onsubmit="return false" enctype="multipart/form-data">
   
     <!-- ================= PERSONAL ================= -->
     <div class="section">

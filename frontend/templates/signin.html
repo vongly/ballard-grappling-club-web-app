@@ -6,54 +6,56 @@
 
 <div class="gap"></div>
 
-<h1 class="page-center">Sign In</h1>
-
-<div style="height: 10px;"></div>
-
-<div style="max-width: 400px; margin-inline:auto;">
-
-  <form id="loginForm" method="POST" action="/signin">
-
-    <div style="margin-bottom: 12px;">
-      <input
-        type="email"
-        name="email"
-        id="email"
-        placeholder="Email"
-        autocomplete="username"
-        required
-        style="width:100%; padding:10px;"
-      />
-    </div>
-
-    <div style="margin-bottom: 12px;">
-      <input
-        type="password"
-        name="password"
-        id="password"
-        placeholder="Password"
-        autocomplete="current-password"
-        required
-        style="width:100%; padding:10px;"
-      />
-    </div>
-
-    <button type="submit">
-      Sign In
-    </button>
-
-  </form>
-
-  {% with messages = get_flashed_messages() %}
-    {% if messages %}
-      <div style="margin-top: 12px; text-align:center; color:red;">
-        {% for message in messages %}
-          <p>{{ message }}</p>
-        {% endfor %}
+<div class="page-member">
+  <h1 class="page-center">Sign In</h1>
+  
+  <div style="height: 10px;"></div>
+  
+  <div style="max-width: 400px; margin-inline:auto;">
+  
+    <form id="loginForm" method="POST" action="/signin">
+  
+      <div style="margin-bottom: 12px;">
+        <input
+          type="email"
+          name="email"
+          id="email"
+          placeholder="Email"
+          autocomplete="username"
+          required
+          style="width:100%; padding:10px;"
+        />
       </div>
-    {% endif %}
-  {% endwith %}
-
+  
+      <div style="margin-bottom: 12px;">
+        <input
+          type="password"
+          name="password"
+          id="password"
+          placeholder="Password"
+          autocomplete="current-password"
+          required
+          style="width:100%; padding:10px;"
+        />
+      </div>
+  
+      <button type="submit">
+        Sign In
+      </button>
+  
+    </form>
+  
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div style="margin-top: 12px; text-align:center; color:red;">
+          {% for message in messages %}
+            <p>{{ message }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+  
+  </div>
 </div>
 
 {% endblock %}

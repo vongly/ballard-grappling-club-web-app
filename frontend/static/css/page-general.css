@@ -60,5 +60,9 @@
   .page-hero {
     padding: 100px 24px 70px;
   }
+  
+  .page-member {
+    width: 80%;
+  }
 
 }
