@@ -1,7 +1,6 @@
 import sys
 from pathlib import Path
 from datetime import date, datetime
-from urllib.parse import urlparse
 
 from fastapi import APIRouter, UploadFile, File, Form, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -37,6 +36,8 @@ from env import (
     S3_SECRET_KEY,
     S3_REGION
 )
+
+
 
 router = APIRouter()
 
@@ -192,22 +193,6 @@ async def create_student(
 @router.get("/me")
 def get_me(student=Depends(get_current_student)):
 
-    def normalize_s3_key(value: str) -> str:
-        if not value:
-            return value
-
-        if value.startswith("http"):
-            parsed = urlparse(value)
-            value = parsed.path.lstrip("/")
-
-        value = value.lstrip("/")
-
-        prefix = f"{BUCKET_NAME}/"
-        while value.startswith(prefix):
-            value = value[len(prefix):]
-
-        return value
-
     client_kwargs = {
         "service_name": "s3",
         "endpoint_url": S3_URL,
@@ -221,21 +206,15 @@ def get_me(student=Depends(get_current_student)):
 
     s3_client = boto3.client(**client_kwargs)
 
-    clean_key = normalize_s3_key(student.photo_url)
-
-    if BUCKET_NAME in clean_key:
-        raise ValueError(f"Invalid S3 key after normalization: {clean_key}")
-
     presigned_url = s3_client.generate_presigned_url(
         "get_object",
         Params={
             "Bucket": BUCKET_NAME,
-            "Key": clean_key,
+            "Key": student.photo_url.lstrip("/"),
         },
         ExpiresIn=3600,
     )
 
-    result = student.__dict__.copy()
-    result["presigned_url"] = presigned_url
+    student.presigned_url = presigned_url
 
-    return result
+    return student
