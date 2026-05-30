@@ -152,7 +152,8 @@ class StripeEvent(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     event_id: Mapped[str] = mapped_column(unique=True, index=True)
-    created: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True),
-        server_default=func.now()
-    )
+    status: Mapped[int] = mapped_column(default=0, nullable=True)
+    # -1 -> failed
+    # 0 -> processing
+    # 1 -> completed
+    created: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

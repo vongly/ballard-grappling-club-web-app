@@ -163,12 +163,13 @@ class StripeServices:
             ],
             "success_url": f"{frontend_url}/success?session_id={{CHECKOUT_SESSION_ID}}",
             "cancel_url": f"{frontend_url}/cancel",
+            "allow_promotion_codes": True,
         }
 
 
         # 3. ONLY add subscription_data if needed (optional)
         if mode == "subscription" and first_day_next_month and launch_timestamp:
-            if now < LAUNCH_TIMESTAMP:
+            if now < LAUNCH_TIMESTAMP - timedelta(days=2):
                 # PRE-LAUNCH: no billing until launch
                 checkout_data["subscription_data"] = {
                     "trial_end": int(LAUNCH_TIMESTAMP.timestamp())
