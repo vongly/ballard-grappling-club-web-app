@@ -135,6 +135,7 @@ class Class(Base):
     class_time: Mapped[time] = mapped_column(nullable=False)
     type: Mapped[int] = mapped_column(default=0, nullable=False)
     # 0 - Adult BJJ
+    promotion: Mapped[int] = mapped_column(default=0, nullable=False)
     created: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
 

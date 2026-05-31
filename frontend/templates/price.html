@@ -19,7 +19,12 @@
 
   {% for product in products %}
 
-    <div class="pricing-card">
+    {% if product.id == 2 %}
+      <div class="pricing-card highlight">
+        <div class="plan-badge">Founding<br>Member Rate</div>
+    {% else %}
+      <div class="pricing-card">
+    {% endif %}
 
       <h2>
         ${{ (product.unit_amount / 100) | int }}
