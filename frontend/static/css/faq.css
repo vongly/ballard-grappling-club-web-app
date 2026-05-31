@@ -44,8 +44,10 @@
 
 
   cursor: pointer;
+  text-align: left;
 
 }
+
 
 /* simple + / − icon */
 .icon {
