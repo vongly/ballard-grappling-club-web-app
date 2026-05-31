@@ -76,9 +76,10 @@ def price():
 
     active_products = sorted(
         [p for p in products if p.get("active") == 1],
-        key=lambda p: p.get("product_order")
+        key=lambda p: p.get("product_order"),
     )
-
+    from pprint import pprint
+    pprint(active_products)
     return render_template("price.html", products=active_products)
 
 @app.route("/schedule")
