@@ -10,8 +10,8 @@ from db.models import Student, Product
 
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 
-from utils.stripe_services import StripeServices
 from utils.security import get_current_student, get_current_superuser
+from services.stripe_services import StripeServices
 
 sys.path.append(str(Path(__file__).resolve().parents[2]))
 

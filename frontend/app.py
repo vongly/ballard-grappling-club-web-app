@@ -1,3 +1,4 @@
+import os
 import sys
 from pathlib import Path
 import requests
@@ -11,12 +12,15 @@ from flask import (
     make_response,
     flash,
     session,
+    send_file
 )
 
 from routes.api.register import register_bp
 from routes.api.dashboard import dashboard_bp
 from routes.api.stripe import stripe_ui_bp
 
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(str(Path(__file__).resolve().parents[2]))
 
 from env import API_BASE, SECRET_KEY
@@ -114,6 +118,20 @@ def signin():
 app.register_blueprint(register_bp)
 app.register_blueprint(dashboard_bp)
 app.register_blueprint(stripe_ui_bp)
+
+
+# Static endpints -> logos, photos....
+
+
+@app.route("/logo/main_compass_svg")
+def logo():
+    return send_file(
+        os.path.join(
+            BASE_DIR,
+            "static/images/logo/logo_main_compass.svg"
+        ),
+        mimetype="image/svg+xml"
+    )
 
 print(app.url_map)
 
