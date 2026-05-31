@@ -229,7 +229,7 @@ async def get_me(student=Depends(get_current_student)):
 
     client_kwargs = {
         "service_name": "s3",
-        "endpoint_url": S3_URL_CDN,
+        "endpoint_url": S3_URL,
         "aws_access_key_id": S3_ACCESS_KEY,
         "aws_secret_access_key": S3_SECRET_KEY,
     }
@@ -249,6 +249,6 @@ async def get_me(student=Depends(get_current_student)):
         ExpiresIn=3600,
     )
 
-    student.presigned_url = presigned_url
+    student.presigned_url = presigned_url.replace(S3_URL, S3_URL_CDN)
 
     return student
