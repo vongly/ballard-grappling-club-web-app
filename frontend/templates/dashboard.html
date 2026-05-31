@@ -19,8 +19,12 @@
         <div>{{ student.email }}</div>
 
         <div class="membership-status">
-          {% if subscription %}
-            {% if subscription.status == 1 %}
+          {% if student.type == '0' %}
+              <span class="plan-type" style="color: green">
+                Staff Member
+              </span>
+          {% elif subscription %}
+            {% if subscription.type == 1 %}
               <span class="plan-type" style="color: green">
                 {{ subscription_product.name }}
               </span>

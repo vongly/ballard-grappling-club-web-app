@@ -38,7 +38,7 @@ class Student(Base):
     emergency_contact_relationship: Mapped[str] = mapped_column(nullable=False)
     emergency_contact_phone: Mapped[str] = mapped_column(nullable=False)
 
-    type: Mapped[str] = mapped_column(default=1, nullable=False)
+    type: Mapped[int] = mapped_column(default=1, nullable=False)
     # 0 - Adult Student -> Staff (Free Tuition)
     # 1 - Adult Student -> Paid User
     # 2 - Adult Student -> Free Tuition
