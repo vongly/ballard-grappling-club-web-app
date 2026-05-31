@@ -74,7 +74,10 @@ def about():
 def price():
     products = api_get("/products") or []
 
-    active_products = [p for p in products if p.get("active") == 1]
+    active_products = sorted(
+        [p for p in products if p.get("active") == 1],
+        key=lambda p: p.get("product_order")
+    )
 
     return render_template("price.html", products=active_products)
 
