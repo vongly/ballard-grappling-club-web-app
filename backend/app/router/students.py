@@ -194,28 +194,30 @@ async def create_student(
 @router.get("/me")
 async def get_me(student=Depends(get_current_student)):
 
-    client_kwargs = {
-        "service_name": "s3",
-        "endpoint_url": S3_URL_CDN,
-        "aws_access_key_id": S3_ACCESS_KEY,
-        "aws_secret_access_key": S3_SECRET_KEY,
-    }
+    key = student.photo_url.lstrip("/")
 
-    if S3_REGION:
-        client_kwargs["region_name"] = S3_REGION
-        client_kwargs["config"] = Config(signature_version="s3v4")
+    if USE_PUBLIC_IMAGES:
+        base_url = S3_URL_CDN or S3_URL
 
-    s3_client = boto3.client(**client_kwargs)
+        student.presigned_url = f"{base_url}/{key}"
 
-    presigned_url = s3_client.generate_presigned_url(
-        "get_object",
-        Params={
-            "Bucket": BUCKET_NAME,
-            "Key": student.photo_url.lstrip("/"),
-        },
-        ExpiresIn=3600,
-    )
+    else:
+        s3_client = boto3.client(
+            "s3",
+            endpoint_url=S3_URL,
+            aws_access_key_id=S3_ACCESS_KEY,
+            aws_secret_access_key=S3_SECRET_KEY,
+            region_name=S3_REGION,
+            config=Config(signature_version="s3v4"),
+        )
 
-    student.presigned_url = presigned_url
+        student.presigned_url = s3_client.generate_presigned_url(
+            "get_object",
+            Params={
+                "Bucket": BUCKET_NAME,
+                "Key": key,
+            },
+            ExpiresIn=3600,
+        )
 
     return student
