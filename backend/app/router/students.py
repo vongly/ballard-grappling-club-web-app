@@ -23,7 +23,8 @@ from utils.security import (
     verify_password,
     create_access_token
 )
-import utils.helpers as helpers
+from utils import helpers
+from services.email_services import send_email_smtp, render_email
 
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 
@@ -35,7 +36,9 @@ from env import (
     S3_URL_CDN,
     S3_ACCESS_KEY,
     S3_SECRET_KEY,
-    S3_REGION
+    S3_REGION,
+    FRONTEND_URL_PUBLIC,
+    MY_EMAIL,
 )
 
 
@@ -162,6 +165,36 @@ async def create_student(
 
         db.commit()
         db.refresh(student)
+
+        welcome_body = render_email(
+                template_name="new_sub.html",
+                name=student.first,
+                title="Welcome!",
+                frontend_url=FRONTEND_URL_PUBLIC,
+            )
+        send_email_smtp(
+            to_email=student.email,
+            subject="Welcome!",
+            body_html=welcome_body,
+        )
+
+        welcome_body_internal = render_email(
+                template_name="welcome_internal.html",
+                id=student.id,
+                first=student.first,
+                last=student.last,
+                phone=student.phone,
+                email=student.email,
+                birthdate=student.birthdate,
+                join_date=student.created,
+                title="Welcome!",
+                frontend_url=FRONTEND_URL_PUBLIC,
+            )
+        send_email_smtp(
+            to_email=MY_EMAIL,
+            subject="New Student Account",
+            body_html=welcome_body_internal,
+        )
 
     except IntegrityError:
         db.rollback()

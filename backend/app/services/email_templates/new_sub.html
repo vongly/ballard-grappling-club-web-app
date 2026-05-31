@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1 style="margin-top:0;">{{ student_name }} You're Subscribed!</h1>
+
+<p>
+  You have successfully subscribed to our {{ sub_name }} plan. Please navigate to your 
+  <a href="{{frontend_url}}/dashboard">dashboard</a> to manage your membership, view 
+  your account details, and stay up to date with everything happening at the gym.
+</p>
+
+<p>
+  If you have any questions, please don't hesitate to reach out.
+</p>
+
+<p>
+  We'll see you in class!
+</p>
+
+{% endblock %}

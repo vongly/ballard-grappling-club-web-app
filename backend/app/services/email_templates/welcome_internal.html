@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1 style="margin-top:0; color:#111827;">
+  New Member Joined 🎉
+</h1>
+
+<p>
+  A new account has been created.
+</p>
+
+<hr style="border:none; border-top:1px solid #e5e7eb; margin:20px 0;" />
+
+<h2 style="margin-bottom:10px;">Member Details</h2>
+
+<p style="margin:5px 0;">
+  <strong>Student ID:</strong> {{ id }}
+</p>
+
+<p style="margin:5px 0;">
+  <strong>Name:</strong> {{ first }} {{ last }}
+</p>
+
+<p style="margin:5px 0;">
+  <strong>phone:</strong> {{ phone }}
+</p>
+
+<p style="margin:5px 0;">
+  <strong>Email:</strong> {{ email }}
+</p>
+
+<p style="margin:5px 0;">
+  <strong>Birthdate:</strong> {{ birthdate }}
+</p>
+
+<p style="margin:5px 0;">
+  <strong>Age:</strong>
+  {{ join_date.year - birthdate.year - (
+      (join_date.month, join_date.day) < (birthdate.month, birthdate.day)
+  ) }} years old
+</p>
+
+<p style="margin:5px 0;">
+  <strong>Join Date:</strong> {{ join_date }}
+</p>
+
+<hr style="border:none; border-top:1px solid #e5e7eb; margin:20px 0;" />
+
+<table role="presentation" cellspacing="0" cellpadding="0" style="margin-top:15px;">
+  <tr>
+    <td bgcolor="#111827" style="border-radius:6px;">
+      <a href="{{ frontend_url }}/admin/users/{{ user_id }}"
+         style="display:inline-block; padding:12px 20px; color:#ffffff; text-decoration:none; font-weight:bold;">
+        View User in Admin
+      </a>
+    </td>
+  </tr>
+</table>
+
+
+{% endblock %}

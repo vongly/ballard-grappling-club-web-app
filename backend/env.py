@@ -23,9 +23,10 @@ WAIVER_PREFIX = os.getenv("WAIVER_PREFIX")
 STRIPE_KEY = os.getenv("STRIPE_KEY")
 STRIPE_WEBHOOK_KEY = os.getenv("STRIPE_WEBHOOK_KEY")
 
+MY_EMAIL = os.getenv("MY_EMAIL")
 FROM_EMAIL = os.getenv("FROM_EMAIL")
 FROM_EMAIL_APP_PASSWORD = os.getenv("FROM_EMAIL_APP_PASSWORD")
-REPLY_EMAIL = os.getenv("REPLY_EMAIL")
+FORWARDING_EMAIL = os.getenv("FORWARDING_EMAIL")
 
 def print_env_var():
     for key, value in globals().items():

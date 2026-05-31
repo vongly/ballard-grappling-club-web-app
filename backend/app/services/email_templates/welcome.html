@@ -5,34 +5,21 @@
 <h1 style="margin-top:0;">Welcome, {{ name }} 👋</h1>
 
 <p>
-    Your account has been successfully created and you're all set to start using the system.
+  Your account has been successfully created! You're all set to join us for classes.
+  Please navigate to your <a href="{{frontend_url}}/dashboard">dashboard</a> where you'll be able to manage your membership,
+  view your account details, and stay up to date with everything happening at the gym.
 </p>
 
 <p>
-    From your dashboard, you'll be able to manage your membership, view your account details, and stay up to date with everything happening at the gym.
+  You can also check out our class <a href="{{ frontend_url }}/schedule" style="color:#2563eb;">schedule</a>!
 </p>
 
 <p>
-You can also check the class schedule anytime to find upcoming sessions and plan your training.
+  If you have any questions, please don't hesitate to reach out.
 </p>
 
-<!-- CTA: Dashboard -->
-<table role="presentation" cellspacing="0" cellpadding="0" style="margin-top:20px;">
-  <tr>
-    <td bgcolor="#2563eb" style="border-radius:6px;">
-      <a href="{{ frontend_url }}/dashboard"
-         style="display:inline-block; padding:12px 20px; color:#ffffff; text-decoration:none; font-weight:bold;">
-        Go to your dashboard
-      </a>
-    </td>
-  </tr>
-</table>
-<p style="margin-top:25px;">
-  View our class <a href="{{ frontend_url }}/schedule" style="color:#2563eb;">schedule</a>!
-</p>
-
-<p style="margin-top:30px; font-size:14px; color:#6b7280;">
-If you have any questions, you can reply directly to this email.
+<p>
+  We look forward to seeing you soon!
 </p>
 
 {% endblock %}

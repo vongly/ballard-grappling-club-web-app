@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>{{ subject }}</title>
+    <title>{{ title }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
   </head>
 
@@ -14,12 +14,12 @@
         <td align="center">
 
           <!-- Email container -->
-          <table role="presentation" width="600" cellspacing="0" cellpadding="0" style="background-color:#ffffff; border-radius:8px; overflow:hidden;">
+          <table role="presentation" width="600" cellspacing="0" cellpadding="0" style="background-color:#ffffff; border-radius:2px; overflow:hidden;">
 
             <!-- Logo Section -->
             <tr>
-              <td align="center" style="padding:30px 20px; background-color:#111827;">
-                  <img src="https://ballardgrapplingclub.com/logo/main_compass_svg" alt="Logo" width="120" style="display:block;">
+              <td align="center" style="padding:10px 20px 0px; background-color:#dfd6c6;">
+                  <img src="https://ballardgrapplingclub.com/logo/main_compass_svg" alt="Logo" width="240" style="display:block;">
               </td>
             </tr>
 
@@ -27,6 +27,11 @@
             <tr>
               <td style="padding:30px 40px; color:#111827;">
                 {% block content %}{% endblock %}
+                <p>
+                  <strong>
+                    Ballard Grappling Club
+                  </strong>
+                </p>
               </td>
             </tr>
 
@@ -35,9 +40,6 @@
               <td style="padding:20px 40px; font-size:12px; color:#6b7280; text-align:center; background-color:#f9fafb;">
                 <p style="margin:0;">
                   © {{ year or "2026" }} Your Brand. All rights reserved.
-                </p>
-                <p style="margin:5px 0 0 0;">
-                  If you didn’t request this email, you can ignore it.
                 </p>
               </td>
             </tr>

@@ -10,7 +10,7 @@ sys.path.append(str(Path(__file__).resolve().parents[2]))
 from env import (
     FROM_EMAIL,
     FROM_EMAIL_APP_PASSWORD, 
-    REPLY_EMAIL,
+    FORWARDING_EMAIL,
     FRONTEND_URL_PUBLIC,
 )
 
@@ -20,7 +20,7 @@ def send_email_smtp(
     body_html: str,
     from_email: str = FROM_EMAIL,
     from_email_app_password: str = FROM_EMAIL_APP_PASSWORD,
-    reply_to_email: str = REPLY_EMAIL,
+    reply_to_email: str = FORWARDING_EMAIL,
 ):
     msg = MIMEMultipart()
 
@@ -64,7 +64,7 @@ if __name__ == "__main__":
     html = render_email(
         "welcome.html",
         name="Vong",
-        subject="Welcome!",
+        title="Welcome!",
         frontend_url=FRONTEND_URL_PUBLIC,
     )
     send_email_smtp(
