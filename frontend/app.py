@@ -164,7 +164,7 @@ def qr_class(class_id: int):
 
     data = response.json()
 
-    class_details = "Scan to Check into:<br>" + format_class_details(data)["html"]
+    class_details = "Scan to Check into:<br><br>" + format_class_details(data)["html"]
 
     url = f"{request.host_url}class/{class_id}/checkin"
 

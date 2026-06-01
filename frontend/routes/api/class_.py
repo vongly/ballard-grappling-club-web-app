@@ -20,7 +20,7 @@ def class_checkin(class_id):
         f"{API_BASE}/class/{class_id}",
         timeout=5,
     )
-    class_details = "Sign in to Check into:<br>" + format_class_details(response.json())["html"]
+    class_details = "Sign in to Check into:<br><br>" + format_class_details(response.json())["html"]
 
     token = session.get("token")
 
