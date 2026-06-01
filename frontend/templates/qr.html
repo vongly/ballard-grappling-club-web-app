@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    /* =========================
+       SAFE GLOBAL RESET
+    ========================== */
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+
+      background: white;
+
+      /* IMPORTANT:
+         do NOT hide overflow on mobile,
+         it causes QR clipping in Safari/Chrome */
+      overflow: auto;
+    }
+
+    /* =========================
+       FULL SCREEN SAFE WRAPPER
+       Uses dynamic viewport height (fixes mobile address bar issue)
+    ========================== */
+    .screen {
+      width: 100%;
+      min-height: 100vh;
+      min-height: 100dvh; /* modern mobile fix */
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      padding: 5vw; /* prevents edge clipping on tiny screens */
+      box-sizing: border-box;
+
+      background: white;
+    }
+
+    /* =========================
+       QR CONTAINER
+       - scales based on BOTH width and height
+       - guarantees it never exceeds viewport
+    ========================== */
+    .qr {
+      width: min(90vw, 90vh);
+      height: min(90vw, 90vh);
+
+      aspect-ratio: 1 / 1;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      box-sizing: border-box;
+    }
+
+    /* =========================
+       SVG SAFETY
+    ========================== */
+    .qr .svg {
+      width: 100%;
+      height: 100%;
+
+      display: block;
+
+      /* CRITICAL: prevents SVG from being clipped */
+      overflow: visible;
+    }
+
+    /* =========================
+       SMALL SCREEN ADJUSTMENT
+    ========================== */
+    @media (max-width: 480px) {
+      .qr {
+        width: min(95vw, 95vh);
+        height: min(95vw, 95vh);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="screen">
+    <div class="qr">
+      {{ svg | safe }}
+    </div>
+  </div>
+</body>
+</html>

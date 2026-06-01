@@ -12,13 +12,16 @@ from flask import (
     make_response,
     flash,
     session,
-    send_file
+    send_file,
+    abort,
+    Response,
 )
 
 from routes.api.register import register_bp
 from routes.api.dashboard import dashboard_bp
 from routes.api.stripe import stripe_ui_bp
 
+from utils.qr_codes import create_qr_code
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(str(Path(__file__).resolve().parents[2]))
@@ -78,8 +81,7 @@ def price():
         [p for p in products if p.get("active") == 1],
         key=lambda p: p.get("product_order"),
     )
-    from pprint import pprint
-    pprint(active_products)
+
     return render_template("price.html", products=active_products)
 
 @app.route("/schedule")
@@ -124,15 +126,36 @@ app.register_blueprint(dashboard_bp)
 app.register_blueprint(stripe_ui_bp)
 
 
+@app.route("/qr")
+def qr():
+    url = request.args.get("url")
+
+    if not url:
+        abort(400, "Missing ?url=")
+
+    svg = create_qr_code(url=url)
+
+    return render_template("qr.html", svg=svg)
+
+
 # Static endpints -> logos, photos....
 
-
 @app.route("/logo/main_compass_svg")
-def logo():
+def logo_compass():
     return send_file(
         os.path.join(
             BASE_DIR,
             "static/images/logo/logo_main_compass.svg"
+        ),
+        mimetype="image/svg+xml"
+    )
+
+@app.route("/logo/main_compass_clear_svg")
+def logo_compass_clear():
+    return send_file(
+        os.path.join(
+            BASE_DIR,
+            "static/images/logo/logo_main_compass_clear.svg"
         ),
         mimetype="image/svg+xml"
     )
