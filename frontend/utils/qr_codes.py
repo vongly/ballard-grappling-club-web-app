@@ -14,7 +14,7 @@ def create_qr_code(
     LOGO_FILE = Path(__file__).resolve().parent.parent / logo_filepath_relative
 
     # FIXED OUTPUT SIZE (this is the key change)
-    CANVAS_SIZE = 400
+    CANVAS_SIZE = 300
 
     BORDER_RATIO = 0.08  # percent padding inside canvas
 
