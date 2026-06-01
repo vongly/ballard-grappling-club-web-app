@@ -8,17 +8,18 @@
        SAFE GLOBAL RESET
     ========================== */
     html, body {
-      margin: 0;
       padding: 0;
+      margin: 0;
       width: 100%;
       height: 100%;
 
       background: white;
-
+      color: #37445c;
       /* IMPORTANT:
          do NOT hide overflow on mobile,
          it causes QR clipping in Safari/Chrome */
       overflow: auto;
+      text-align: center;
     }
 
     /* =========================
@@ -31,10 +32,12 @@
       min-height: 100dvh; /* modern mobile fix */
 
       display: flex;
-      justify-content: center;
+      justify-content: flex-start;
       align-items: center;
+      flex-direction: column;
+      gap: 0px;
 
-      padding: 5vw; /* prevents edge clipping on tiny screens */
+      padding: 5vw;
       box-sizing: border-box;
 
       background: white;
@@ -46,8 +49,8 @@
        - guarantees it never exceeds viewport
     ========================== */
     .qr {
-      width: min(90vw, 90vh);
-      height: min(90vw, 90vh);
+      width: min(45vw, 45vh);
+      height: min(45vw, 45vh);
 
       aspect-ratio: 1 / 1;
 
@@ -79,12 +82,18 @@
         width: min(95vw, 95vh);
         height: min(95vw, 95vh);
       }
+      .screen {
+        padding-top: 30%;
+      }
     }
   </style>
 </head>
 
 <body>
   <div class="screen">
+    <h3>
+      {{ class_details|safe }}
+    </h3>
     <div class="qr">
       {{ svg | safe }}
     </div>

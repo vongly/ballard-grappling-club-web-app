@@ -15,6 +15,7 @@ from flask import (
     send_file,
     abort,
     Response,
+    Request,
 )
 
 from routes.api.register import register_bp
@@ -25,8 +26,10 @@ from routes.api.class_ import class_bp
 from utils.qr_codes import create_qr_code
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 sys.path.append(str(Path(__file__).resolve().parents[2]))
 
+from utils.helpers import format_class_details
 from env import API_BASE, SECRET_KEY
 
 
@@ -101,28 +104,25 @@ def signout():
 @app.route("/signin", methods=["GET", "POST"])
 def signin():
 
+    next = request.args.get("next")
+    prompt = request.args.get("prompt")
+
     redirect_response = redirect_if_authenticated()
     if redirect_response:
         return redirect_response
 
     if request.method == "GET":
-        return render_template(
-            "signin.html",
-            next=request.args.get("next")
-        )
+        return render_template("signin.html", next=next, prompt=prompt)
 
     email = request.form.get("email")
     password = request.form.get("password")
     next_url = request.form.get("next")
 
-    res = requests.post(
-        f"{API_BASE}/auth",
-        json={"email": email, "password": password}
-    )
+    res = requests.post(f"{API_BASE}/auth", json={"email": email, "password": password})
 
     if res.status_code != 200:
         flash("Invalid login")
-        return redirect(url_for("signin"))
+        return redirect(url_for("signin", next=next_url))
 
     session["token"] = res.json().get("access_token")
 
@@ -149,6 +149,34 @@ def qr():
 
     return render_template("qr.html", svg=svg)
 
+
+@app.route("/qr/class/<int:class_id>")
+def qr_class(class_id: int):
+    # Fetch class data
+    try:
+        response = requests.get(
+            f"{API_BASE}/class/{class_id}",
+            timeout=5,
+        )
+        response.raise_for_status()
+    except requests.RequestException:
+        abort(502, "Failed to fetch class data")
+
+    data = response.json()
+
+    class_details = "Scan to Check into:<br>" + format_class_details(data)["html"]
+
+    url = f"{request.host_url}class/{class_id}/checkin"
+
+    svg = create_qr_code(url=url)
+
+    return render_template(
+        "qr.html",
+        svg=svg,
+        class_details=class_details,
+        class_id=class_id,
+        url=url,
+    )
 
 # Static endpints -> logos, photos....
 

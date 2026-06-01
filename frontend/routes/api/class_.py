@@ -8,6 +8,7 @@ import requests
 
 sys.path.append(str(Path(__file__).resolve().parents[2]))
 
+from utils.helpers import format_class_details
 from env import API_BASE
 
 class_bp = Blueprint("class", __name__)
@@ -15,10 +16,16 @@ class_bp = Blueprint("class", __name__)
 
 @class_bp.route("/class/<int:class_id>/checkin")
 def class_checkin(class_id):
+    response = requests.get(
+        f"{API_BASE}/class/{class_id}",
+        timeout=5,
+    )
+    class_details = "Sign in to Check into:<br>" + format_class_details(response.json())["html"]
+
     token = session.get("token")
 
     next_url = f"/class/{class_id}/checkin"
-    signin_url = f"/signin?{urlencode({'next': next_url})}"
+    signin_url = f"/signin?{urlencode({"next": next_url, "prompt": class_details})}"
 
     # If no auth token → redirect to signin with return path
     if not token:
@@ -28,14 +35,13 @@ def class_checkin(class_id):
         resp = requests.get(
             f"{API_BASE}/class/{class_id}/checkin",
             headers={"Authorization": f"Bearer {token}"},
-            timeout=5,
+            timeout=10,
         )
 
         try:
             data = resp.json()
             reason = data.get("reason").title()
 
-            print(resp.json())
         except Exception:
             # Invalid response from API → show error page
             return render_template(
