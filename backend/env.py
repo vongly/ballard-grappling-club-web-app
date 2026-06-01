@@ -27,6 +27,7 @@ MY_EMAIL = os.getenv("MY_EMAIL")
 FROM_EMAIL = os.getenv("FROM_EMAIL")
 FROM_EMAIL_APP_PASSWORD = os.getenv("FROM_EMAIL_APP_PASSWORD")
 FORWARDING_EMAIL = os.getenv("FORWARDING_EMAIL")
+TEST_EMAIL = os.getenv("TEST_EMAIL")
 
 def print_env_var():
     for key, value in globals().items():

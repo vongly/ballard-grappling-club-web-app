@@ -24,7 +24,7 @@
                 Staff Member
               </span>
           {% elif subscription %}
-            {% if subscription.type == 1 %}
+            {% if subscription.status == 1 %}
               <span class="plan-type" style="color: green">
                 {{ subscription_product.name }}
               </span>
@@ -35,6 +35,9 @@
             {% else %}
               <span class="plan-type" style="color: red">
                 Inactive Subscription
+                {% if subscription.classes_available == 0 %}
+                  <br>No Classes Available
+                {% endif %}
               </span>
             {% endif %}
 

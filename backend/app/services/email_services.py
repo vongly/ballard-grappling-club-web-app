@@ -12,7 +12,10 @@ from env import (
     FROM_EMAIL_APP_PASSWORD, 
     FORWARDING_EMAIL,
     FRONTEND_URL_PUBLIC,
+    TEST_EMAIL,
 )
+
+TEST_EMAIL = bool(TEST_EMAIL)
 
 def send_email_smtp(
     to_email: str,
@@ -21,12 +24,15 @@ def send_email_smtp(
     from_email: str = FROM_EMAIL,
     from_email_app_password: str = FROM_EMAIL_APP_PASSWORD,
     reply_to_email: str = FORWARDING_EMAIL,
+    test_email: bool = TEST_EMAIL,
 ):
+    test_string = 'TEST EMAIL - ' if test_email else ''
+
     msg = MIMEMultipart()
 
     msg["From"] = "Ballard Grappling Club"
     msg["To"] = to_email
-    msg["Subject"] = subject
+    msg["Subject"] = test_string + subject
 
     if reply_to_email:
         msg["Reply-To"] = reply_to_email

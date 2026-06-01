@@ -15,6 +15,8 @@
   
     <form id="loginForm" method="POST" action="/signin">
   
+      <input type="hidden" name="next" value="{{ next or '' }}">
+
       <div style="margin-bottom: 12px;">
         <input
           type="email"

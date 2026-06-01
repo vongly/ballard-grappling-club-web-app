@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title }}</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      height: 100vh;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+      background: #fafafa;
+    }
+
+    .card {
+      text-align: center;
+      padding: 30px;
+      border-radius: 12px;
+      background: white;
+      width: 90%;
+      max-width: 420px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+
+    .btn {
+        display: inline-block;
+        margin-top: 15px;
+        padding: 12px 18px;
+        background: #1a73e8;
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: bold;
+        transition: 0.2s ease;
+    }
+
+    .btn:hover {
+       background: #1558b0;
+    }
+
+
+    @media (max-width: 768px) {
+        .card {
+            width: 70%;
+        }
+    }
+
+    .success { color: #0a7a2f; }
+    .failed { color: #b00020; }
+    .auth_required { color: #1a73e8; }
+    .error { color: #555; }
+  </style>
+</head>
+
+<body>
+
+  <div class="card {{ status }}">
+    <h1>
+      {% if status == "success" %} ✅
+      {% elif status == "failed" %} ❌
+      {% elif status == "auth_required" %} 🔐
+      {% else %} ⚠️
+      {% endif %}
+    </h1>
+
+    <h2>{{ title }}</h2>
+    <p>{{ reason }}</p>
+    <p>{{ message }}</p>
+    <a href="/dashboard" class="btn">Go to Dashboard</a>
+
+    {% if next_url %}
+      <a href="{{ next_url }}">Go to Sign In</a>
+    {% endif %}
+  </div>
+
+</body>
+</html>

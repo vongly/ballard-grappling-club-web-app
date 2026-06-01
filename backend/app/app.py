@@ -6,10 +6,11 @@ from sqlalchemy.orm import Session
 from .router import (
     students,
     products,
-    auth,
-    stripe,
+    classes,
     transactions,
     subscriptions,
+    auth,
+    stripe,
     stripe_webhooks,
 )
 
@@ -63,4 +64,10 @@ app.include_router(
     subscriptions.router,
     prefix='/subscriptions',
     tags=['subscriptions'],
+)
+
+app.include_router(
+    classes.router,
+    prefix='/class',
+    tags=['class'],
 )

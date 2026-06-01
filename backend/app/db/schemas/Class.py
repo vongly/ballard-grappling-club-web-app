@@ -1,23 +1,28 @@
 from pydantic import BaseModel
-from datetime import datetime, date, time
+from datetime import datetime, date, time, datetime
 
 #
 class Create(BaseModel):
     name: str
-    class_date: date
-    class_time: time
-    type: int = 1
+    class_datetime: datetime
+    duration: int
+    type: int = 0
+    promotion: int = 0
 
 class Update(BaseModel):
-    class_date: date | None = None
-    class_time: time | None = None
+    name: str | None = None
+    class_datetime: datetime | None = None
+    duration: int
     type: int | None = None
+    promotion: int | None = None
 
 class Out(BaseModel):
     id: int
-    class_date: date
-    class_time: time
-    type: int = 1
+    name: str
+    class_datetime: datetime
+    duration: int
+    type: int
+    promotion: int
     created: datetime
     updated: datetime
 

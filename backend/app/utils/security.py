@@ -46,40 +46,40 @@ def create_access_token(data: dict):
 
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
-def get_current_student(token: str = Depends(oauth2_scheme)):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
+def check_for_student(token: str = Depends(oauth2_scheme)):
+    if not token:
+        return None
 
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-
         student_id = payload.get("sub")
-        if student_id is None:
-            raise credentials_exception
+
+        if not student_id:
+            return None
 
         student_id = int(student_id)
 
     except JWTError:
-        raise credentials_exception
+        return None
 
     db = SessionLocal()
     try:
-        student = db.query(Student).filter(Student.id == student_id).first()
-
-        if not student:
-            raise credentials_exception
-
-        return student
+        return db.query(Student).filter(Student.id == student_id).first()
     finally:
         db.close()
 
-def get_current_superuser(student: Student = Depends(get_current_student)):
+
+def get_current_student(student: Student | None = Depends(check_for_student)):
+    if student is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
+
+    return student
+
+def get_current_superuser(student: Student | None = Depends(check_for_student)):
+    if student is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
+
     if student.type != 0:
-        raise HTTPException(
-            status_code=403,
-            detail="Superuser access required",
-        )
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Superuser access required")
+
     return student

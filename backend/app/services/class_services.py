@@ -23,44 +23,77 @@ from typing import Tuple, List, Optional
 today = datetime.today()
 
 class ClassAttendanceService:
-    def __init__(self, db: Session, class_id: int):
+    def __init__(self, db: Session, class_id: int, student_id: int):
         self.db = db
+
         self.class_obj = self.db.query(Class).filter(Class.id == class_id).first()
+        self.student = self.db.query(Student).filter(Student.id == student_id).first()
+        self.subscription = self.db.query(Subscription).filter(Subscription.student_id == student_id).first()
 
-    def check_eligibility(self, student_id: int):
-        student = self.db.query(Student).filter(Student.id == student_id).first()
+        self.today = date.today()
 
-        if not student:
+    def check_eligibility(self):
+        if not self.student:
             return {"status": False, "reason": "student not found"}
 
-        subscription = self.db.query(Subscription).filter(Subscription.student_id == student_id).first()
+        if not self.class_obj:
+            return {"status": False, "reason": "class not found"}
 
+        # Promotional class overrides everything
         if self.class_obj.promotion == 1:
             return {"status": True, "reason": "promotional class"}
 
-        elif subscription:
-            if subscription.status == 1:
+        # Subscription flow
+        if self.subscription:
+            if self.subscription.status == 1:
                 return {"status": True, "reason": "active subscription"}
-            elif subscription.classes_available > 0:
+
+            if self.subscription.classes_available > 0:
                 return {"status": True, "reason": "classes available"}
 
-        else: # -> no subscription
-            # 1 -> check staff
-            if student.type == "0":
-                return {"status": True, "reason": "staff member"            }
-            # 2 -> check if trial needs to be initiated
-            elif student.trial_initiated is None:
-                return {"status": True, "reason": "trial no yet initiated"}
-            # 3 -> check if trial is in progress
-            elif today < student.trial_initiated + timedelta(days=7):
-                return {"status": True, "reason": "trial in progress"}
-        
-        return {"status": False, "reason": "ineligible"}
-        
-    def check_student_in(self, student_id):
-        is_eligible = self.check_eligibility(student_id=student_id)
+        # No subscription flow
+        if self.student.type == "0":
+            return {"status": True, "reason": "staff member"}
 
-        if not is_eligible["status"]:
-            return False # -> needs to purchase class or sub
-        else:
-            return True # -> take actions depend on reason
+        if self.student.trial_initiated is None:
+            return {"status": True, "reason": "trial initiated"}
+
+        if self.student.trial_initiated + timedelta(days=7) > self.today:
+            return {"status": True, "reason": "trial in progress"}
+
+        return {"status": False, "reason": "ineligible"}
+
+    def check_student_in(self):
+        result = self.check_eligibility()
+
+        status = result["status"]
+        reason = result["reason"]
+
+        if not status:
+            if reason == "student not found":
+                return {"status": "failed", "action": "route to register"}
+
+            return {"status": "failed", "reason": reason, "action": "route to purchase"}
+
+        existing = self.db.query(ClassAttendance).filter_by(class_id=self.class_obj.id,student_id=self.student.id).first()
+        if existing:
+            return {
+                "status": "success",
+                "reason": "already checked in",
+                "action": "route to success",
+            }
+
+        attendance = ClassAttendance(class_id=self.class_obj.id, student_id=self.student.id)
+        self.db.add(attendance)
+
+        if reason == "classes available":
+            if self.subscription:
+                self.subscription.classes_available -= 1
+
+        elif reason in ["active subscription", "staff member", "trial initiated"]:
+            if not self.student.trial_initiated:
+                self.student.trial_initiated = self.today
+
+        self.db.commit()
+
+        return {"status": "success", "reason": reason, "action": "route to success"}

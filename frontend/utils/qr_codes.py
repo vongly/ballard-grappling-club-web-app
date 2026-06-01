@@ -88,7 +88,7 @@ def create_qr_code(
 
     logo_size = radius * 5
 
-    logo_x = center_x - logo_size / 2
+    logo_x = center_x - logo_size / 2 - 1
     logo_y = center_y - logo_size / 2 + 8
 
     svg_parts.append(

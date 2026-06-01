@@ -8,6 +8,7 @@ from sqlalchemy import (
     func,
     Integer,
     JSON,
+    UniqueConstraint,
     and_,
 )
 from .database import Base
@@ -38,7 +39,7 @@ class Student(Base):
     emergency_contact_relationship: Mapped[str] = mapped_column(nullable=False)
     emergency_contact_phone: Mapped[str] = mapped_column(nullable=False)
 
-    type: Mapped[int] = mapped_column(default=1, nullable=False)
+    type: Mapped[str] = mapped_column(default=1, nullable=False)
     # 0 - Adult Student -> Staff (Free Tuition)
     # 1 - Adult Student -> Paid User
     # 2 - Adult Student -> Free Tuition
@@ -131,8 +132,8 @@ class Class(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     name: Mapped[str] = mapped_column(nullable=False)
-    class_date: Mapped[date] = mapped_column(nullable=False)
-    class_time: Mapped[time] = mapped_column(nullable=False)
+    class_datetime: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    duration: Mapped[int] = mapped_column(nullable=False)
     type: Mapped[int] = mapped_column(default=0, nullable=False)
     # 0 - Adult BJJ
     promotion: Mapped[int] = mapped_column(default=0, nullable=False)
@@ -140,11 +141,20 @@ class Class(Base):
     updated: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
 
 class ClassAttendance(Base):
-    __tablename__ = 'class_attendance'
+    __tablename__ = "class_attendance"
+
+    __table_args__ = (
+        UniqueConstraint(
+            "class_id",
+            "student_id",
+            name="uq_class_attendance_class_student",
+        ),
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     class_id: Mapped[int] = mapped_column(nullable=False)
     student_id: Mapped[int] = mapped_column(nullable=False)
+
     created: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
 

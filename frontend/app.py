@@ -20,6 +20,7 @@ from flask import (
 from routes.api.register import register_bp
 from routes.api.dashboard import dashboard_bp
 from routes.api.stripe import stripe_ui_bp
+from routes.api.class_ import class_bp
 
 from utils.qr_codes import create_qr_code
 
@@ -99,15 +100,20 @@ def signout():
 
 @app.route("/signin", methods=["GET", "POST"])
 def signin():
+
     redirect_response = redirect_if_authenticated()
     if redirect_response:
         return redirect_response
-    
+
     if request.method == "GET":
-        return render_template("signin.html")
+        return render_template(
+            "signin.html",
+            next=request.args.get("next")
+        )
 
     email = request.form.get("email")
     password = request.form.get("password")
+    next_url = request.form.get("next")
 
     res = requests.post(
         f"{API_BASE}/auth",
@@ -119,11 +125,17 @@ def signin():
         return redirect(url_for("signin"))
 
     session["token"] = res.json().get("access_token")
+
+    if next_url and next_url.startswith("/"):
+        return redirect(next_url)
+
     return redirect(url_for("dashboard.dashboard"))
+
 
 app.register_blueprint(register_bp)
 app.register_blueprint(dashboard_bp)
 app.register_blueprint(stripe_ui_bp)
+app.register_blueprint(class_bp)
 
 
 @app.route("/qr")

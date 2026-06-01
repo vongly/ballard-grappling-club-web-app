@@ -1,8 +1,8 @@
 """system sync
 
-Revision ID: 69462cac7812
+Revision ID: 11c062f7ff4c
 Revises: 
-Create Date: 2026-05-27 16:46:39.787720
+Create Date: 2026-05-31 22:28:14.780481
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '69462cac7812'
+revision: str = '11c062f7ff4c'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -33,9 +33,10 @@ def upgrade() -> None:
     op.create_table('classes',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
-    sa.Column('class_date', sa.Date(), nullable=False),
-    sa.Column('class_time', sa.Time(), nullable=False),
+    sa.Column('class_datetime', sa.DateTime(timezone=True), nullable=False),
+    sa.Column('duration', sa.Integer(), nullable=False),
     sa.Column('type', sa.Integer(), nullable=False),
+    sa.Column('promotion', sa.Integer(), nullable=False),
     sa.Column('created', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.Column('updated', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.PrimaryKeyConstraint('id')
@@ -63,6 +64,7 @@ def upgrade() -> None:
     op.create_table('stripe_events',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('event_id', sa.String(), nullable=False),
+    sa.Column('status', sa.Integer(), nullable=True),
     sa.Column('created', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
