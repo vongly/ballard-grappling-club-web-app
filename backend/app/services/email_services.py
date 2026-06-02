@@ -55,7 +55,7 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 from datetime import datetime
 
 env = Environment(
-    loader=FileSystemLoader("backend/app/services/email_templates"),
+    loader="app/services/email_templates",
     autoescape=select_autoescape(["html", "xml"])
 )
 def render_email(template_name: str, **context):

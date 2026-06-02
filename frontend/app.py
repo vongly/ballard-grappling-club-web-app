@@ -141,13 +141,18 @@ app.register_blueprint(class_bp)
 @app.route("/qr")
 def qr():
     url = request.args.get("url")
+    details = request.args.get("details")
 
     if not url:
         abort(400, "Missing ?url=")
 
     svg = create_qr_code(url=url)
 
-    return render_template("qr.html", svg=svg)
+    return render_template(
+        "qr.html",
+        svg=svg,
+        details=details
+    )
 
 
 @app.route("/qr/class/<int:class_id>")
@@ -173,7 +178,7 @@ def qr_class(class_id: int):
     return render_template(
         "qr.html",
         svg=svg,
-        class_details=class_details,
+        details=class_details,
         class_id=class_id,
         url=url,
     )
