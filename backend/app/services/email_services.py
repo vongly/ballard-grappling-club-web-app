@@ -69,7 +69,7 @@ def send_email(
     msg = MIMEMultipart()
     msg["To"] = to_email
     msg["Subject"] = subject
-    msg["From"] = "Ballard Grappling Club"
+    msg["From"] = f"Ballard Grappling Club <{FORWARDING_EMAIL}>"
     msg["Reply-To"] = reply_to_email
 
     msg.attach(MIMEText(body_html, "html"))
@@ -95,6 +95,8 @@ def render_email(template_name: str, **context):
         year=datetime.now().year,
         **context
     )
+
+
 if __name__ == "__main__":
     html = render_email(
         "welcome.html",

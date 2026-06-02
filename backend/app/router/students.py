@@ -170,7 +170,7 @@ async def create_student(
 
         try:
             welcome_body = render_email(
-                template_name="new_sub.html",
+                template_name="welcome.html",
                 name=student.first,
                 title="Welcome!",
                 frontend_url=FRONTEND_URL_PUBLIC,
