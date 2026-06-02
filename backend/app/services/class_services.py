@@ -66,6 +66,8 @@ class ClassAttendanceService:
         return {"status": False, "reason": "ineligible"}
 
     def check_student_in(self):
+        send_first_class_follow_up = False
+
         result = self.check_eligibility()
 
         status = result["status"]
@@ -91,30 +93,33 @@ class ClassAttendanceService:
         if reason == "classes available":
             if self.subscription:
                 self.subscription.classes_available -= 1
+                send_first_class_follow_up = True
 
         elif reason in ["active subscription", "staff member", "trial initiated"]:
             if not self.student.trial_initiated:
                 self.student.trial_initiated = self.today
-
-                import traceback
-
-                try:
-                    welcome_body = render_email(
-                        template_name="first_class_follow_up.html",
-                        name=self.student.first,
-                        title="Thanks for Joining Us!",
-                    )
-
-                    send_email(
-                        to_email=self.student.email,
-                        subject="Thanks for Joining Us!!",
-                        body_html=welcome_body,
-                    )
-
-                except Exception as e:
-                    print(f"Failed to send first class follow-up {self.student.id}: {e}")
-                    traceback.print_exc()
+                send_first_class_follow_up = True
 
         self.db.commit()
+
+        if send_first_class_follow_up:
+            import traceback
+
+            try:
+                welcome_body = render_email(
+                    template_name="first_class_follow_up.html",
+                    name=self.student.first,
+                    title="Thanks for Joining Us!",
+                )
+
+                send_email(
+                    to_email=self.student.email,
+                    subject="Thanks for Joining Us!!",
+                    body_html=welcome_body,
+                )
+
+            except Exception as e:
+                print(f"Failed to send first class follow-up {self.student.id}: {e}")
+                traceback.print_exc()
 
         return {"status": "success", "reason": reason, "action": "route to success"}
