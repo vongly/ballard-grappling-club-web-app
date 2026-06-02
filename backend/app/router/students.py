@@ -24,7 +24,7 @@ from utils.security import (
     create_access_token
 )
 from utils import helpers
-from services.email_services import send_email_smtp, render_email
+from services.email_services import send_email, render_email
 
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 
@@ -166,19 +166,23 @@ async def create_student(
         db.commit()
         db.refresh(student)
 
-        welcome_body = render_email(
+        import traceback
+
+        try:
+            welcome_body = render_email(
                 template_name="new_sub.html",
                 name=student.first,
                 title="Welcome!",
                 frontend_url=FRONTEND_URL_PUBLIC,
             )
-        send_email_smtp(
-            to_email=student.email,
-            subject="Welcome!",
-            body_html=welcome_body,
-        )
 
-        welcome_body_internal = render_email(
+            send_email(
+                to_email=student.email,
+                subject="Welcome!",
+                body_html=welcome_body,
+            )
+
+            welcome_body_internal = render_email(
                 template_name="welcome_internal.html",
                 id=student.id,
                 first=student.first,
@@ -190,11 +194,17 @@ async def create_student(
                 title="Welcome!",
                 frontend_url=FRONTEND_URL_PUBLIC,
             )
-        send_email_smtp(
-            to_email=MY_EMAIL,
-            subject="New Student Account",
-            body_html=welcome_body_internal,
-        )
+
+            send_email(
+                to_email=MY_EMAIL,
+                subject="New Student Account",
+                body_html=welcome_body_internal,
+            )
+
+        except Exception as e:
+            print(f"Failed to send welcome emails for student {student.id}: {e}")
+            traceback.print_exc()
+
 
     except IntegrityError:
         db.rollback()

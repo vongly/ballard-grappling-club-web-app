@@ -12,7 +12,7 @@ from db.models import Subscription, StripeEvent, Student, Product
 
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 
-from services.email_services import send_email_smtp, render_email
+from services.email_services import send_email, render_email
 
 sys.path.append(str(Path(__file__).resolve().parents[2]))
 
@@ -131,7 +131,7 @@ async def update_subscription(
                         title="Drop-In Purchased!",
                         frontend_url=FRONTEND_URL_PUBLIC,
                     )
-                send_email_smtp(
+                send_email(
                     to_email=student.email,
                     subject="Drop-In Purchased",
                     body_html=dropin_purchase_body,
@@ -155,7 +155,7 @@ async def update_subscription(
                         title="Drop-In Purchased!",
                         frontend_url=FRONTEND_URL_PUBLIC,
                     )
-                send_email_smtp(
+                send_email(
                     to_email=MY_EMAIL,
                     subject="Drop-In Purchased!",
                     body_html=dropin_purchase_body_internal,
@@ -211,7 +211,7 @@ async def update_subscription(
                         title="New Subscription",
                         frontend_url=FRONTEND_URL_PUBLIC,
                     )
-                send_email_smtp(
+                send_email(
                     to_email=student.email,
                     subject="New Subscription",
                     body_html=new_sub_body,
@@ -235,7 +235,7 @@ async def update_subscription(
                         title="Welcome!",
                         frontend_url=FRONTEND_URL_PUBLIC,
                     )
-                send_email_smtp(
+                send_email(
                     to_email=MY_EMAIL,
                     subject="New Subscription!",
                     body_html=new_sub_body_internal,

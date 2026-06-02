@@ -14,13 +14,12 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 sys.path.append(str(Path(__file__).resolve().parents[2]))
 
 from env import (
-    FROM_EMAIL,
-    FROM_EMAIL_APP_PASSWORD, 
     FORWARDING_EMAIL,
     FRONTEND_URL_PUBLIC,
     TEST_EMAIL,
 )
 
+TEST_EMAIL = int(TEST_EMAIL)
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from datetime import datetime
@@ -39,6 +38,9 @@ env = Environment(
     autoescape=select_autoescape(["html", "xml"])
 )
 
+# ----------------------------
+# Gmail API setup
+# ----------------------------
 BASE_DIR = Path(__file__).resolve().parent
 SCOPES = ["https://www.googleapis.com/auth/gmail.send"]
 
@@ -51,21 +53,24 @@ def get_gmail_service():
     return build("gmail", "v1", credentials=creds)
 
 
-def send_email_smtp(
+# ----------------------------
+# EMAIL SEND (REPLACEMENT FOR SMTP)
+# ----------------------------
+def send_email(
     to_email: str,
     subject: str,
     body_html: str,
     reply_to_email: str = FORWARDING_EMAIL,
-    test_email: str = TEST_EMAIL,
+    test_email: int = TEST_EMAIL,
 ):
     # keep your test flag behavior
-    subject = f"TEST EMAIL - {subject}" if test_email == "TRUE" else subject
+    subject = f"TEST EMAIL - {subject}" if test_email == 1 else subject
 
     msg = MIMEMultipart()
     msg["To"] = to_email
     msg["Subject"] = subject
     msg["From"] = "Ballard Grappling Club"
-    msg["Reply-To"] = reply_to_email or FORWARDING_EMAIL
+    msg["Reply-To"] = reply_to_email
 
     msg.attach(MIMEText(body_html, "html"))
 
@@ -80,6 +85,9 @@ def send_email_smtp(
     ).execute()
 
 
+# ----------------------------
+# TEMPLATE RENDERING (unchanged)
+# ----------------------------
 def render_email(template_name: str, **context):
     template = env.get_template(template_name)
 
@@ -94,7 +102,7 @@ if __name__ == "__main__":
         title="Welcome!",
         frontend_url=FRONTEND_URL_PUBLIC,
     )
-    send_email_smtp(
+    send_email(
         to_email="vongly62@gmail.com",
         subject="Test Auto Email",
         body_html=html,
