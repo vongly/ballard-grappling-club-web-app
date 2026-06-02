@@ -15,8 +15,6 @@ from env import (
     TEST_EMAIL,
 )
 
-TEST_EMAIL = bool(TEST_EMAIL)
-
 def send_email_smtp(
     to_email: str,
     subject: str,
@@ -24,15 +22,15 @@ def send_email_smtp(
     from_email: str = FROM_EMAIL,
     from_email_app_password: str = FROM_EMAIL_APP_PASSWORD,
     reply_to_email: str = FORWARDING_EMAIL,
-    test_email: bool = TEST_EMAIL,
+    test_email: str = TEST_EMAIL,
 ):
-    test_string = 'TEST EMAIL - ' if test_email else ''
-
+    subject = f"TEST EMAIL - {subject}" if test_email == "TRUE" else subject
+  
     msg = MIMEMultipart()
 
     msg["From"] = "Ballard Grappling Club"
     msg["To"] = to_email
-    msg["Subject"] = test_string + subject
+    msg["Subject"] = subject
 
     if reply_to_email:
         msg["Reply-To"] = reply_to_email
@@ -41,7 +39,7 @@ def send_email_smtp(
 
     msg.attach(MIMEText(body_html, "html"))
 
-    with smtplib.SMTP("smtp.gmail.com", 587) as server:
+    with smtplib.SMTP("smtp.gmail.com", 2525) as server:
         server.starttls()
 
         # ⚠️ login usually MUST match actual sending mailbox (Gmail requirement)
