@@ -345,6 +345,27 @@ function initRegistrationForm() {
   const form = document.getElementById("form");
   const submitBtn = form?.querySelector('button[type="submit"]');
 
+  function setLoading(isLoading) {
+    if (isLoading) {
+      submitBtn.disabled = true;
+      submitBtn.classList.add("loading");
+
+      // save original button text
+      submitBtn.dataset.originalText = submitBtn.innerHTML;
+
+      submitBtn.innerHTML = `
+        <span class="spinner"></span>
+        Processing...
+      `;
+    } else {
+      submitBtn.disabled = false;
+      submitBtn.classList.remove("loading");
+
+      submitBtn.innerHTML =
+        submitBtn.dataset.originalText || "Submit";
+    }
+  }
+
   if (!form || !submitBtn) return;
 
   function updateSubmitState() {
@@ -366,7 +387,7 @@ function initRegistrationForm() {
       return;
     }
 
-    submitBtn.disabled = true;
+    setLoading(true);
 
     try {
       const errorBox = document.getElementById("submit-error");
@@ -430,6 +451,7 @@ function initRegistrationForm() {
       errorBox.style.display = "block";
 
     } finally {
+      setLoading(false);
       updateSubmitState();
     }
 
