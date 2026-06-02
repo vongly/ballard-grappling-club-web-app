@@ -54,8 +54,10 @@ def send_email_smtp(
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from datetime import datetime
 
+TEMPLATE_DIR = Path(__file__).resolve().parent / "email_templates"
+
 env = Environment(
-    loader="app/services/email_templates",
+    loader=FileSystemLoader(str(TEMPLATE_DIR)),
     autoescape=select_autoescape(["html", "xml"])
 )
 def render_email(template_name: str, **context):
