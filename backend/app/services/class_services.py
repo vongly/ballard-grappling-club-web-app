@@ -102,35 +102,17 @@ class ClassAttendanceService:
                     welcome_body = render_email(
                         template_name="first_class.html",
                         name=self.student.first,
-                        title="Welcome!",
+                        title="Thanks for Joining Us!",
                     )
 
                     send_email(
                         to_email=self.student.email,
-                        subject="Welcome!",
+                        subject="Thanks for Joining Us!!",
                         body_html=welcome_body,
                     )
 
-                    welcome_body_internal = render_email(
-                        template_name="welcome_internal.html",
-                        id=self.student.id,
-                        first=self.student.first,
-                        last=self.student.last,
-                        phone=self.student.phone,
-                        email=self.student.email,
-                        birthdate=self.student.birthdate,
-                        join_date=self.student.created,
-                        title="Welcome!",
-                    )
-
-                    send_email(
-                        to_email=MY_EMAIL,
-                        subject="New Student Account",
-                        body_html=welcome_body_internal,
-                    )
-
                 except Exception as e:
-                    print(f"Failed to send welcome emails for student {self.student.id}: {e}")
+                    print(f"Failed to send first class follow-up {self.student.id}: {e}")
                     traceback.print_exc()
 
         self.db.commit()
