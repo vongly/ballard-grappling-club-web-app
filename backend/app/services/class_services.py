@@ -100,7 +100,7 @@ class ClassAttendanceService:
 
                 try:
                     welcome_body = render_email(
-                        template_name="welcome.html",
+                        template_name="first_class.html",
                         name=self.student.first,
                         title="Welcome!",
                     )

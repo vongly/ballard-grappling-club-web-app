@@ -104,7 +104,7 @@ async def update_subscription(
             status = event_data["status"]
             mode = event_data["mode"]
 
-            # FIX: DO NOT use .get() on StripeObject
+            # DROP IN PURCHASE
             if (
                 status == "complete"
                 and payment_status == "paid"
