@@ -5,6 +5,8 @@ docker-compose.yml
   
 */alembic.ini
 
+*.json
+
 # =========================
 # ENV / SECRETS
 # =========================

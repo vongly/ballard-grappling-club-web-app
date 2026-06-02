@@ -1,9 +1,15 @@
 import sys
-from pathlib import Path
 
-import smtplib
+import base64
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from datetime import datetime
+from pathlib import Path
+
+from googleapiclient.discovery import build
+from google.oauth2.credentials import Credentials
+
+from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 sys.path.append(str(Path(__file__).resolve().parents[2]))
 
@@ -15,39 +21,6 @@ from env import (
     TEST_EMAIL,
 )
 
-def send_email_smtp(
-    to_email: str,
-    subject: str,
-    body_html: str,
-    from_email: str = FROM_EMAIL,
-    from_email_app_password: str = FROM_EMAIL_APP_PASSWORD,
-    reply_to_email: str = FORWARDING_EMAIL,
-    test_email: str = TEST_EMAIL,
-):
-    subject = f"TEST EMAIL - {subject}" if test_email == "TRUE" else subject
-  
-    msg = MIMEMultipart()
-
-    msg["From"] = "Ballard Grappling Club"
-    msg["To"] = to_email
-    msg["Subject"] = subject
-
-    if reply_to_email:
-        msg["Reply-To"] = reply_to_email
-    else:
-        msg["Reply-To"] = from_email
-
-    msg.attach(MIMEText(body_html, "html"))
-
-    with smtplib.SMTP("smtp.gmail.com", 2525) as server:
-        server.starttls()
-
-        # ⚠️ login usually MUST match actual sending mailbox (Gmail requirement)
-        server.login(from_email, from_email_app_password)
-
-        server.send_message(msg)
-
-
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from datetime import datetime
@@ -58,6 +31,55 @@ env = Environment(
     loader=FileSystemLoader(str(TEMPLATE_DIR)),
     autoescape=select_autoescape(["html", "xml"])
 )
+
+TEMPLATE_DIR = Path(__file__).resolve().parent / "email_templates"
+
+env = Environment(
+    loader=FileSystemLoader(str(TEMPLATE_DIR)),
+    autoescape=select_autoescape(["html", "xml"])
+)
+
+BASE_DIR = Path(__file__).resolve().parent
+SCOPES = ["https://www.googleapis.com/auth/gmail.send"]
+
+
+def get_gmail_service():
+    creds = Credentials.from_authorized_user_file(
+        str(BASE_DIR / "token.json"),
+        SCOPES
+    )
+    return build("gmail", "v1", credentials=creds)
+
+
+def send_email_smtp(
+    to_email: str,
+    subject: str,
+    body_html: str,
+    reply_to_email: str = FORWARDING_EMAIL,
+    test_email: str = TEST_EMAIL,
+):
+    # keep your test flag behavior
+    subject = f"TEST EMAIL - {subject}" if test_email == "TRUE" else subject
+
+    msg = MIMEMultipart()
+    msg["To"] = to_email
+    msg["Subject"] = subject
+    msg["From"] = "Ballard Grappling Club"
+    msg["Reply-To"] = reply_to_email or FORWARDING_EMAIL
+
+    msg.attach(MIMEText(body_html, "html"))
+
+    # ---- Gmail API send ----
+    service = get_gmail_service()
+
+    raw_message = base64.urlsafe_b64encode(msg.as_bytes()).decode()
+
+    service.users().messages().send(
+        userId="me",
+        body={"raw": raw_message}
+    ).execute()
+
+
 def render_email(template_name: str, **context):
     template = env.get_template(template_name)
 
@@ -65,7 +87,6 @@ def render_email(template_name: str, **context):
         year=datetime.now().year,
         **context
     )
-
 if __name__ == "__main__":
     html = render_email(
         "welcome.html",
