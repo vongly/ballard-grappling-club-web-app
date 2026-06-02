@@ -10,9 +10,11 @@ sys.path.append(str(Path(__file__).resolve().parents[1]))
 from db.models import Student, Product, Subscription, Class, ClassAttendance
 from db.database import SessionLocal
 
+from services.email_services import send_email, render_email
+
 sys.path.append(str(Path(__file__).resolve().parents[2]))
 
-from env import STRIPE_KEY, TRIAL_LENGTH
+from env import MY_EMAIL
 
 
 
@@ -93,6 +95,43 @@ class ClassAttendanceService:
         elif reason in ["active subscription", "staff member", "trial initiated"]:
             if not self.student.trial_initiated:
                 self.student.trial_initiated = self.today
+
+                import traceback
+
+                try:
+                    welcome_body = render_email(
+                        template_name="welcome.html",
+                        name=self.student.first,
+                        title="Welcome!",
+                    )
+
+                    send_email(
+                        to_email=self.student.email,
+                        subject="Welcome!",
+                        body_html=welcome_body,
+                    )
+
+                    welcome_body_internal = render_email(
+                        template_name="welcome_internal.html",
+                        id=self.student.id,
+                        first=self.student.first,
+                        last=self.student.last,
+                        phone=self.student.phone,
+                        email=self.student.email,
+                        birthdate=self.student.birthdate,
+                        join_date=self.student.created,
+                        title="Welcome!",
+                    )
+
+                    send_email(
+                        to_email=MY_EMAIL,
+                        subject="New Student Account",
+                        body_html=welcome_body_internal,
+                    )
+
+                except Exception as e:
+                    print(f"Failed to send welcome emails for student {self.student.id}: {e}")
+                    traceback.print_exc()
 
         self.db.commit()
 

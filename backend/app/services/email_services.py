@@ -88,7 +88,9 @@ def send_email(
 # ----------------------------
 # TEMPLATE RENDERING (unchanged)
 # ----------------------------
-def render_email(template_name: str, **context):
+def render_email(template_name: str, frontend_url:str = FRONTEND_URL_PUBLIC, **context):
+    context["frontend_url"] = FRONTEND_URL_PUBLIC
+
     template = env.get_template(template_name)
 
     return template.render(

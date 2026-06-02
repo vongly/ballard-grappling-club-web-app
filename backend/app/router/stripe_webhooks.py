@@ -129,7 +129,6 @@ async def update_subscription(
                         prod_name=product.name,
                         amount=product.unit_amount,
                         title="Drop-In Purchased!",
-                        frontend_url=FRONTEND_URL_PUBLIC,
                     )
                 send_email(
                     to_email=student.email,
@@ -153,7 +152,6 @@ async def update_subscription(
                         classes_available=subscription.classes_available,
                         date=subscription.created,
                         title="Drop-In Purchased!",
-                        frontend_url=FRONTEND_URL_PUBLIC,
                     )
                 send_email(
                     to_email=MY_EMAIL,
@@ -209,7 +207,6 @@ async def update_subscription(
                         sub_name=product.name,
                         sub_amount=product.unit_amount,
                         title="New Subscription",
-                        frontend_url=FRONTEND_URL_PUBLIC,
                     )
                 send_email(
                     to_email=student.email,
@@ -233,7 +230,6 @@ async def update_subscription(
                         amount=product.unit_amount,
                         date=subscription.created,
                         title="Welcome!",
-                        frontend_url=FRONTEND_URL_PUBLIC,
                     )
                 send_email(
                     to_email=MY_EMAIL,

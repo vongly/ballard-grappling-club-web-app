@@ -37,7 +37,6 @@ from env import (
     S3_ACCESS_KEY,
     S3_SECRET_KEY,
     S3_REGION,
-    FRONTEND_URL_PUBLIC,
     MY_EMAIL,
 )
 
@@ -173,7 +172,6 @@ async def create_student(
                 template_name="welcome.html",
                 name=student.first,
                 title="Welcome!",
-                frontend_url=FRONTEND_URL_PUBLIC,
             )
 
             send_email(
@@ -192,7 +190,6 @@ async def create_student(
                 birthdate=student.birthdate,
                 join_date=student.created,
                 title="Welcome!",
-                frontend_url=FRONTEND_URL_PUBLIC,
             )
 
             send_email(
