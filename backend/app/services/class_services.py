@@ -45,6 +45,12 @@ class ClassAttendanceService:
         if self.class_obj.promotion == 1:
             return {"status": True, "reason": "promotional class"}
 
+        # Special Users Flow
+        if self.student.type == "0":
+            return {"status": True, "reason": "staff member"}
+        elif self.student.type == "100": # Hoa membership
+            return {"status": True, "reason": "hoa"}
+
         # Subscription flow
         if self.subscription:
             if self.subscription.status == 1:
@@ -54,9 +60,6 @@ class ClassAttendanceService:
                 return {"status": True, "reason": "classes available"}
 
         # No subscription flow
-        if self.student.type == "0":
-            return {"status": True, "reason": "staff member"}
-
         if self.student.trial_initiated is None:
             return {"status": True, "reason": "trial initiated"}
 
@@ -95,7 +98,7 @@ class ClassAttendanceService:
                 self.subscription.classes_available -= 1
                 send_first_class_follow_up = True
 
-        elif reason in ["active subscription", "staff member", "trial initiated"]:
+        elif reason in ["active subscription", "staff member", "trial initiated, hoa"]:
             if not self.student.trial_initiated:
                 self.student.trial_initiated = self.today
                 send_first_class_follow_up = True

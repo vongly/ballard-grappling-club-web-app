@@ -14,6 +14,41 @@ from env import API_BASE
 class_bp = Blueprint("class", __name__)
 
 
+@class_bp.route("/class/<int:class_id>/students")
+def class_students(class_id):
+    token = session.get("token")
+
+    if not token:
+        return redirect("/signin")
+
+    try:
+        response = requests.get(
+            f"{API_BASE}/class_attendance/{class_id}/students",
+            headers={"Authorization": f"Bearer {token}"},
+            timeout=10,
+        )
+
+        response.raise_for_status()
+        students = response.json()
+
+        response = requests.get(
+            f"{API_BASE}/class/{class_id}",
+            headers={"Authorization": f"Bearer {token}"},
+            timeout=10,
+        )
+
+        response.raise_for_status()
+        class_details = format_class_details(response.json())["html"]
+
+    except requests.RequestException:
+        students = []
+
+    return render_template(
+        "class_students.html",
+        students=students,
+        class_details=class_details,
+    )
+
 @class_bp.route("/class/<int:class_id>/checkin")
 def class_checkin(class_id):
     response = requests.get(
@@ -70,6 +105,11 @@ def class_checkin(class_id):
 
     # Success case → render success state
     if data.get("status") == "success":
+        if reason == "hoa":
+            message = "Hey it's Hoa, you're always welcome here!"
+        else:
+            message = reason
+
         return render_template(
             "class_checkin.html",
             status="success",

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Class Students</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/class_students.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- CLASS HEADER -->
+    <div class="class-header">
+        <div class="class-title">
+            <p class="subtitle">
+            {{ class_details | safe }}
+            </p>
+        </div>
+
+        <div class="class-meta">
+            <div class="meta-box">
+                <span class="label">Students</span>
+                <span class="value">{{ students|length }}</span>
+            </div>
+
+            <div class="meta-box">
+                <span class="label">Status</span>
+                <span class="value">Active</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTENT -->
+    {% if students|length == 0 %}
+        <p class="empty">No students found for this class.</p>
+    {% else %}
+        <div class="grid">
+            {% for s in students %}
+                <div class="card">
+                    <img
+                        class="avatar"
+                        src="{{ s.presigned_url or url_for('static', filename='images/default-avatar.png') }}"
+                        alt="{{ s.first }} {{ s.last }}"
+                    />
+
+                    <div class="name">
+                        {{ s.first }} {{ s.last }}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+</div>
+
+</body>
+</html>

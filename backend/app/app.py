@@ -7,6 +7,7 @@ from .router import (
     students,
     products,
     classes,
+    class_attendance,
     transactions,
     subscriptions,
     auth,
@@ -70,4 +71,10 @@ app.include_router(
     classes.router,
     prefix='/class',
     tags=['class'],
+)
+
+app.include_router(
+    class_attendance.router,
+    prefix='/class_attendance',
+    tags=['class_attendance'],
 )
