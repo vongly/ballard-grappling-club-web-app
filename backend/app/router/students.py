@@ -9,7 +9,7 @@ from sqlalchemy.exc import IntegrityError
 import boto3
 from botocore.client import Config
 from io import BytesIO
-from PIL import Image
+from PIL import Image, ImageOps
 
 
 sys.path.append(str(Path(__file__).resolve().parents[1]))
@@ -104,30 +104,37 @@ async def create_student(
         # ================= PROFILE PICTURE =================
 
         image_pp = Image.open(profile_picture.file)
-        image_pp = image_pp.convert('RGB')
+        image_pp = ImageOps.exif_transpose(image_pp)
+        image_pp = image_pp.convert("RGB")
+        image_pp.thumbnail((1000, 1000))
 
         buffer_pp = BytesIO()
 
         image_pp.save(
             buffer_pp,
-            format='JPEG',
-            quality=90,
+            format="JPEG",
+            quality=70,
+            optimize=True,
         )
 
         buffer_pp.seek(0)
 
-        filename_pp = f'{student.id}.jpg'
+        filename_pp = f"{student.id}.jpg"
 
+        # Build S3 object key
         object_key_pp = (
-            f'{PROFILE_PICTURE_PREFIX}/'
-            f'{filename_pp}'
+            f"{PROFILE_PICTURE_PREFIX}/"
+            f"{filename_pp}"
         )
 
+        # Upload to S3
         S3_CLIENT.upload_fileobj(
             buffer_pp,
             BUCKET_NAME,
             object_key_pp,
-            ExtraArgs={'ContentType': 'image/jpeg'},
+            ExtraArgs={
+                "ContentType": "image/jpeg"
+            },
         )
 
         # ================= WAIVER =================

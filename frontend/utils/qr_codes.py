@@ -9,6 +9,7 @@ def create_qr_code(
         url: str,
         logo_filepath_relative: str = LOGO_PATH,
         output_path: str = None,
+        qr_color_code: str = '424f64',
     ):
 
     LOGO_FILE = Path(__file__).resolve().parent.parent / logo_filepath_relative
@@ -22,7 +23,7 @@ def create_qr_code(
     # Generate QR (fixed version helps consistency too)
     # -----------------------------
 
-    qr = segno.make(url, error="H", version=6)
+    qr = segno.make(url, error="H")
     matrix = qr.matrix
     qr_size = len(matrix)
 
@@ -75,7 +76,7 @@ def create_qr_code(
                 continue
 
             svg_parts.append(
-                f'<rect x="{px}" y="{py}" width="{scale}" height="{scale}" fill="#424f64"/>'
+                f'<rect x="{px}" y="{py}" width="{scale}" height="{scale}" fill="#{qr_color_code}"/>'
             )
 
     # -----------------------------
@@ -87,9 +88,12 @@ def create_qr_code(
     logo_data_uri = f"data:image/png;base64,{png_b64}"
 
     logo_size = radius * 5
-
     logo_x = center_x - logo_size / 2 - 1
     logo_y = center_y - logo_size / 2 + 8
+
+#    logo_size = radius * 1.54
+#    logo_x = center_x - logo_size / 2 
+#    logo_y = center_y - logo_size / 2 
 
     svg_parts.append(
         f'<image href="{logo_data_uri}" '
@@ -108,6 +112,7 @@ def create_qr_code(
 
 if __name__ == '__main__':
     create_qr_code(
-        "https://ballardgrapplingclub.com",
-        output_path="ballard_branded_qr.svg"
+        "https://ballardgrapplingclub.com/dashboard",
+        output_path="dashboard_qr.svg",
     )
+

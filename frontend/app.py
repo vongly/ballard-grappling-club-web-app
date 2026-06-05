@@ -22,6 +22,7 @@ from routes.api.register import register_bp
 from routes.api.dashboard import dashboard_bp
 from routes.api.stripe import stripe_ui_bp
 from routes.api.class_ import class_bp
+from routes.api.reset_password import reset_password_bp
 
 from utils.qr_codes import create_qr_code
 
@@ -130,6 +131,8 @@ def signin():
         return redirect(next_url)
 
     return redirect(url_for("dashboard.dashboard"))
+
+app.register_blueprint(reset_password_bp)
 
 
 app.register_blueprint(register_bp)
