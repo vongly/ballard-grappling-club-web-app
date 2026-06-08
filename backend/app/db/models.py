@@ -1,3 +1,5 @@
+import sqlalchemy
+
 from sqlalchemy.orm import Mapped, mapped_column, relationship, foreign
 from sqlalchemy import (
     DateTime,
@@ -10,7 +12,7 @@ from sqlalchemy import (
     JSON,
     UniqueConstraint,
     and_,
-    false
+    false,
 )
 from .database import Base
 
@@ -45,7 +47,7 @@ class Student(Base):
     # 1 - Adult Student -> Paid User
     # 2 - Adult Student -> Free Tuition
     trial_initiated: Mapped[date] = mapped_column(default=None, nullable=True)
-    email_verified: Mapped[int] = mapped_column(default=1, nullable=False, server_default=false())
+    #email_verified: Mapped[date] = mapped_column(default=None, nullable=True)
 
 
     created: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
