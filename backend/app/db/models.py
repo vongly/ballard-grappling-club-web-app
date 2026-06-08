@@ -10,6 +10,7 @@ from sqlalchemy import (
     JSON,
     UniqueConstraint,
     and_,
+    false
 )
 from .database import Base
 
@@ -44,12 +45,14 @@ class Student(Base):
     # 1 - Adult Student -> Paid User
     # 2 - Adult Student -> Free Tuition
     trial_initiated: Mapped[date] = mapped_column(default=None, nullable=True)
+    email_verified: Mapped[int] = mapped_column(default=1, nullable=False, server_default=false())
+
 
     created: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
 
     subscriptions = relationship("Subscription", back_populates="student")
-    password_reset_tokens: Mapped[list["PasswordResetToken"]] = relationship(
+    password_reset_tokens: Mapped[list["OneTimeToken"]] = relationship(
         back_populates="student",
         cascade="all, delete-orphan"
     )
@@ -173,12 +176,14 @@ class StripeEvent(Base):
     # 1 -> completed
     created: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
-class PasswordResetToken(Base):
+class OneTimeToken(Base):
     __tablename__ = "password_reset_tokens"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     student_id: Mapped[int] = mapped_column(ForeignKey("students.id", ondelete="CASCADE"), index=True)
     token_hash: Mapped[str] = mapped_column(String(64), unique=True, index=True)
+    purpose: Mapped[str] = mapped_column(String(32), index=True, nullable=True)
+    # e.g. "password_reset", "email_confirmation", "invite"
     expires_at: Mapped[datetime] = mapped_column(DateTime)
     used_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     created: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

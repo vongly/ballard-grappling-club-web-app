@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 
-from db.models import Student, PasswordResetToken
+from db.models import Student, OneTimeToken
 from db.database import SessionLocal
 
 
@@ -17,7 +17,7 @@ def create_reset_token(db, student_id: int) -> str:
 
     token_hash = hashlib.sha256(raw_token.encode()).hexdigest()
 
-    reset_token = PasswordResetToken(
+    reset_token = OneTimeToken(
         student_id=student_id,
         token_hash=token_hash,
         expires_at=datetime.utcnow() + timedelta(minutes=30)
@@ -28,12 +28,12 @@ def create_reset_token(db, student_id: int) -> str:
 
     return raw_token
 
-def validate_reset_token(db, token: str) -> PasswordResetToken | None:
+def validate_reset_token(db, token: str) -> OneTimeToken | None:
 
     token_hash = hashlib.sha256(token.encode()).hexdigest()
 
-    return db.query(PasswordResetToken).filter(
-            PasswordResetToken.token_hash == token_hash,
-            PasswordResetToken.used_at.is_(None),
-            PasswordResetToken.expires_at > datetime.utcnow()
+    return db.query(OneTimeToken).filter(
+            OneTimeToken.token_hash == token_hash,
+            OneTimeToken.used_at.is_(None),
+            OneTimeToken.expires_at > datetime.utcnow()
         ).first()

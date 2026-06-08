@@ -5,7 +5,6 @@ from dateutil.relativedelta import relativedelta
 
 import stripe
 from sqlalchemy.dialects.postgresql import insert
-from typing import Optional, Dict, Any
 
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 
@@ -110,7 +109,7 @@ class StripeServices:
 
 
     def get_or_create_customer(self, student_id):
-        student = (self.db.query(Student).filter(Student.id == student_id).first())
+        student = self.db.query(Student).filter(Student.id == student_id).first()
         if not student:
             raise Exception("Student not found")
 
@@ -121,7 +120,11 @@ class StripeServices:
             customer = stripe.Customer.retrieve(subscription.stripe_customer_id)
 
         else:
-            customer = stripe.Customer.create(email=student.email,metadata={"student_id": str(student.id)})
+            customer = stripe.Customer.create(
+                email=student.email,
+                name=f"{student.first} {student.last}",
+                metadata={"student_id": str(student.id)},
+            )
 
             if subscription:
                 subscription.stripe_customer_id = customer.id
@@ -184,32 +187,6 @@ class StripeServices:
         session = stripe.checkout.Session.create(**checkout_data)
 
         return session
-
-    def eligble_for_class(self, student_id: int, trial_length=TRIAL_LENGTH):
-        student = self.db.query(Student).filter(Student.id == student_id).first()
-        existing_customer_id = student.stripe_cust_id
-
-        # Check for Trial Eligibility
-        if not student.trial_initiated:
-            student.trial_initiated = date.today()
-            return True
-        elif date.today() < student.triail_initiated + timedelta(days=trial_length):
-            return True
-        elif date.today() >= student.triail_initiated + timedelta(days=trial_length):
-            pass
-        elif not existing_customer_id:
-            False
-
-
-        customer = self.get_or_create_customer(student.email)
-
-        # Check for Drop In -> Daily Pass
-
-        # Check for Subscription
-            # Check for 1 Day/Week subscription
-            # Check Unlimited
-
-        pass
 
 
 if __name__ == '__main__':

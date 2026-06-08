@@ -17,7 +17,7 @@ from utils.security import verify_password, create_access_token, hash_password
 
 sys.path.append(str(Path(__file__).resolve().parents[2]))
 
-from env import FRONTEND_URL
+from env import FRONTEND_URL_PUBLIC
 
 
 def send_password_reset_email(to_email: str, reset_link: str):
@@ -83,7 +83,7 @@ def forgot_password(
     token = create_reset_token(db, student.id)
 
     # Build frontend reset link
-    reset_link = f"{FRONTEND_URL}/reset-password?token={token}"
+    reset_link = f"{FRONTEND_URL_PUBLIC}/reset-password?token={token}"
 
     # Send email (NOT async)
     send_password_reset_email(
