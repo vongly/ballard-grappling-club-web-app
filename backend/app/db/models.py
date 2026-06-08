@@ -47,7 +47,7 @@ class Student(Base):
     # 1 - Adult Student -> Paid User
     # 2 - Adult Student -> Free Tuition
     trial_initiated: Mapped[date] = mapped_column(default=None, nullable=True)
-    #email_verified: Mapped[date] = mapped_column(default=None, nullable=True)
+    email_verified: Mapped[date] = mapped_column(default=None, nullable=True)
 
 
     created: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
