@@ -44,7 +44,7 @@ def class_students(class_id):
         students = []
 
     return render_template(
-        "class_students.html",
+        "classes/class_students.html",
         students=students,
         class_details=class_details,
     )
@@ -80,7 +80,7 @@ def class_checkin(class_id):
         except Exception:
             # Invalid response from API → show error page
             return render_template(
-                "class_checkin.html",
+                "classes/class_checkin.html",
                 status="error",
                 title="Invalid Response",
                 reason=reason,
@@ -90,7 +90,7 @@ def class_checkin(class_id):
     except requests.RequestException:
         # Service unreachable → show error page (not redirect, since this is backend failure)
         return render_template(
-            "class_checkin.html",
+            "classes/class_checkin.html",
             status="error",
             title="Service Error",
             reason=reason,
@@ -111,7 +111,7 @@ def class_checkin(class_id):
             message = reason
 
         return render_template(
-            "class_checkin.html",
+            "classes/class_checkin.html",
             status="success",
             title="Checked In",
             reason=reason,
@@ -126,7 +126,7 @@ def class_checkin(class_id):
             message = reason
 
         return render_template(
-            "class_checkin.html",
+            "classes/class_checkin.html",
             status="failed",
             title="Check-In Failed",
             reason=message,

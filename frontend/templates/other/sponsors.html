@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% block title %}Sponsors{% endblock %}
+
+{% block content %}
+
+<section class="page-section">
+
+  <!-- HERO -->
+  <div class="page-hero hero-fade-up">
+    <h1>Our Sponsors</h1>
+    <p>
+      Ballard Grappling Club is grateful for the businesses and organizations
+      that support our students, our mission and the growth of jiu jitsu in
+      the Ballard community.
+    </p>
+  </div>
+
+  <!-- SPONSORS -->
+  <div class="sponsors-container">
+
+    <div class="sponsor-row">
+        <div class="sponsor-name">
+            <h2>Elite Sports</h2>
+            <img src="/static/images/sponsors/elite-sports-logo.png" alt="Elite Sports Logo" class="sponsor-logo">
+        </div>
+        <div class="sponsor-details">
+            <p>
+                We're proud to recognize Elite Sports as a sponsor and supporter of
+                Ballard Grappling Club. Elite Sports provides quality BJJ gis, rashguards,
+                belts, MMA gloves, and training apparel designed for Brazilian Jiu-Jitsu,
+                MMA, boxing, and fitness training. Their commitment to accessible,
+                athlete-focused equipment makes them a valuable resource for students,
+                competitors, and coaches alike.
+            </p>
+            <a href="https://elitesports.com" target="_blank">
+                Visit Website →
+            </a>
+        </div>
+    </div>
+
+  </div>
+
+  <!-- BECOME A SPONSOR -->
+    <div class="page-content">
+        <h2>Join Our Ballard & Seattle Community</h2>
+        <p>
+        At Ballard Grappling Club, we believe in supporting our community. If you share
+        similar values, please reach out and connect with us. Whether it's just to say
+        'hi' or in efforts developing a partnership, we'd love to hear from you. 
+        </p>
+    </div>
+
+</section>
+
+<style>
+    :root {
+        --primary: #111827;
+        --secondary: #374151;
+        --light: #f8f9fa;
+        --border-color: #e5e7eb;
+        --max-width: 1100px;
+    }
+
+    .page-section {
+        width: 90%;
+        max-width: var(--max-width);
+        margin: 0 auto;
+    }
+
+    /* HERO */
+    .page-hero {
+        text-align: center;
+        margin-bottom: 0rem;
+    }
+
+    .page-hero h1 {
+        font-size: 3rem;
+        margin-bottom: 2cqmax;
+    }
+
+    .page-hero p {
+        color: var(--secondary);
+        font-size: 1.1rem;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    /* SPONSORS */
+    .sponsors-container {
+        margin-top: 1rem;
+    }
+
+    .sponsor-row {
+        display: grid;
+        grid-template-columns: 250px 1fr;
+        gap: 3rem;
+        padding: 2.5rem 0;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .sponsor-row:last-child {
+        border-bottom: none;
+    }
+
+    .sponsor-name h2 {
+        margin: 0 0 1rem 0;
+    }
+
+    .sponsor-details p {
+        margin-bottom: 1rem;
+        color: var(--secondary);
+    }
+
+    .sponsor-details a {
+        color: var(--accent);
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .sponsor-details a:hover {
+        text-decoration: underline;
+    }
+
+    /* BECOME A SPONSOR */
+    .page-content {
+        margin-top: 5rem;
+        text-align: center;
+    }
+
+    .page-content h2 {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .page-content p {
+        color: var(--secondary);
+        max-width: 650px;
+        margin: 0 auto;
+    }
+
+    @media (max-width: 768px) {
+        .sponsor-row {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+        .page-hero h1 {
+            font-size: 2.25rem;
+        }
+    }
+</style>
+
+{% endblock %}
+

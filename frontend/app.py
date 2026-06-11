@@ -70,10 +70,6 @@ app.secret_key = SECRET_KEY
 def home():
     return render_template("home.html")
 
-@app.route("/comingsoon")
-def comingsoon():
-    return render_template("comingsoon.html")
-
 @app.route("/about")
 def about():
     return render_template("about.html")
@@ -207,6 +203,16 @@ def logo_compass_clear():
         ),
         mimetype="image/svg+xml"
     )
+
+############################
+
+@app.route("/sponsors")
+def sponsors():
+    return render_template("other/sponsors.html")
+
+@app.route("/comingsoon")
+def comingsoon():
+    return render_template("other/comingsoon.html")
 
 print(app.url_map)
 
