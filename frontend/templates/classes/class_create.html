@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}Create Class{% endblock %}
+
+{% block content %}
+
+<div id="dashboard">
+
+  <div class="dashboard-card">
+
+    <!-- HEADER -->
+    <div class="profile-header">
+
+      <div class="profile-info">
+        <h2>Create Class</h2>
+        <div style="opacity: 0.7;">
+          Add a new class to the schedule
+        </div>
+      </div>
+
+    </div>
+
+    <!-- FORM -->
+    <form method="POST">
+
+      <div class="stack">
+
+        <!-- NAME -->
+        <div class="card">
+          <strong>Class Name</strong>
+          <input
+            type="text"
+            name="name"
+            placeholder="e.g. Gi, No Gi"
+            required
+          />
+        </div>
+
+        <!-- DATE -->
+        <div class="card">
+          <strong>Date</strong>
+          <input
+            type="date"
+            name="class_date"
+            required
+          />
+        </div>
+
+        <!-- TIME (AM/PM) -->
+        <div class="card">
+          <strong>Time</strong>
+          <input
+            type="time"
+            name="class_time"
+            required
+          />
+        </div>
+
+        <!-- DURATION -->
+<div class="card">
+  <strong>Duration</strong>
+
+  <div class="select-wrap">
+    <select name="duration" required>
+      <option value="30">30 minutes</option>
+      <option value="60">60 minutes</option>
+      <option value="90" selected>90 minutes</option>
+      <option value="120">120 minutes</option>
+    </select>
+  </div>
+
+</div>
+
+        <!-- PROMOTION (BOOLEAN) -->
+<div class="card">
+  <strong>Promotional Class</strong>
+
+  <div class="select-wrap">
+    <select name="promotion" required>
+      <option value="0" selected>No</option>
+      <option value="1">Yes</option>
+    </select>
+  </div>
+
+</div>
+
+      </div>
+
+      <!-- ACTIONS -->
+      <div style="display:flex; gap:10px; margin-top: 20px;">
+
+        <button type="submit" class="open-modal-btn">
+          Create Class
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
+
+{% endblock %}
+
+<style>
+    
+</style>

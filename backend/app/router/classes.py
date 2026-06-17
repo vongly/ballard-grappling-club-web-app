@@ -34,7 +34,7 @@ router = APIRouter()
 
 @router.get("/", response_model=List[ClassOut])
 def get_all_classes(db: Session = Depends(get_db)):
-    return db.query(Class).order_by(Class.class_date, Class.class_time).all()
+    return db.query(Class).order_by(Class.class_datetime).all()
 
 @router.get("/{class_id}", response_model=ClassOut)
 def get_class(class_id: int, db: Session = Depends(get_db)):

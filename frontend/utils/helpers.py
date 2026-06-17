@@ -12,7 +12,7 @@ def format_class_details(class_details: dict):
         f"({class_details["duration"]} min)"
     )
 
-    str = (
+    text_str = (
         f"{class_details["name"]}"
         f"{dt.strftime("%A %-I:%M %p")}"
         f"{dt.strftime("%B %-d, %Y")}"

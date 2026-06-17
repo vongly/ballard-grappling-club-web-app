@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div id="dashboard">
+
+  <div class="dashboard-card">
+
+    <!-- HEADER -->
+    <div class="profile-header">
+      <div class="profile-info">
+        <h2>Classes</h2>
+        <div style="opacity: 0.7;">
+          {{ current_week|length }} classes this week
+        </div>
+      </div>
+    </div>
+
+    <div class="stack">
+
+      <!-- NEXT WEEK -->
+      {% if next_week %}
+      <div>
+        <h3 style="margin-bottom: 10px;">Next Week</h3>
+
+        {% for class in next_week %}
+        <div class="card">
+
+          <div>
+            {{ class.date_formatted_html | safe }}
+          </div>
+
+          {% if class.promotion == 1 %}
+          <div style="color: #b58900; font-weight: 600;">
+            Promotional Class
+          </div>
+          {% endif %}
+
+          {% if class.instructor %}
+          <div style="opacity: 0.7;">
+            Instructor: {{ class.instructor }}
+          </div>
+          {% endif %}
+
+          <div style="margin-top: 10px;">
+            <a href="/class/{{ class.id }}/students">
+              View Class
+            </a>
+          </div>
+
+        </div>
+        {% endfor %}
+
+      </div>
+      {% endif %}
+
+      <!-- CURRENT WEEK -->
+      {% if current_week %}
+      <div>
+        <h3 style="margin-bottom: 10px;">This Week</h3>
+
+        {% for class in current_week %}
+        <div class="card">
+
+          <div>
+            {{ class.date_formatted_html | safe }}
+          </div>
+
+          {% if class.promotion == 1 %}
+          <div style="color: #b58900; font-weight: 600;">
+            Promotional Class
+          </div>
+          {% endif %}
+
+          {% if class.instructor %}
+          <div style="opacity: 0.7;">
+            Instructor: {{ class.instructor }}
+          </div>
+          {% endif %}
+
+          <div style="margin-top: 10px;">
+            <a href="/class/{{ class.id }}/students">
+              View Class
+            </a>
+          </div>
+
+        </div>
+        {% endfor %}
+
+      </div>
+      {% endif %}
+
+      <!-- CURRENT MONTH -->
+      {% if current_month %}
+      <div>
+        <h3 style="margin-bottom: 10px;">This Month</h3>
+
+        {% for class in current_month %}
+        <div class="card">
+
+          <div>
+            {{ class.date_formatted_html | safe }}
+          </div>
+
+          {% if class.promotion == 1 %}
+          <div style="color: #b58900; font-weight: 600;">
+            Promotional Class
+          </div>
+          {% endif %}
+
+          <div style="margin-top: 10px;">
+            <a href="/class/{{ class.id }}/students">
+              View Class
+            </a>
+          </div>
+
+        </div>
+        {% endfor %}
+
+      </div>
+      {% endif %}
+
+      <!-- LAST MONTH -->
+      {% if last_month %}
+      <div>
+        <h3 style="margin-bottom: 10px;">Last Month</h3>
+
+        {% for class in last_month %}
+        <div class="card">
+
+          <div>
+            {{ class.date_formatted_html | safe }}
+          </div>
+
+          {% if class.promotion == 1 %}
+          <div style="color: #b58900; font-weight: 600;">
+            Promotional Class
+          </div>
+          {% endif %}
+
+          <div style="margin-top: 10px;">
+            <a href="/class/{{ class.id }}/students">
+              View Class
+            </a>
+          </div>
+
+        </div>
+        {% endfor %}
+
+      </div>
+      {% endif %}
+
+      <!-- OLDER -->
+      {% if older %}
+      <div>
+        <h3 style="margin-bottom: 10px;">
+          Older Classes ({{ older|length }})
+        </h3>
+
+        {% for class in older %}
+        <div class="card">
+
+          <div>
+            {{ class.date_formatted_html | safe }}
+          </div>
+
+          {% if class.promotion == 1 %}
+          <div style="color: #b58900; font-weight: 600;">
+            Promotional Class
+          </div>
+          {% endif %}
+
+          <div style="margin-top: 10px;">
+            <a href="/class/{{ class.id }}/students">
+              View Class
+            </a>
+          </div>
+
+        </div>
+        {% endfor %}
+
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}

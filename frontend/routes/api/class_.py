@@ -1,10 +1,11 @@
 import sys
 from pathlib import Path
 
-from flask import Blueprint, render_template, request, session, redirect, flash
+from flask import Blueprint, render_template, request, session, redirect, flash, url_for
 
 from urllib.parse import urlencode
 import requests
+from datetime import datetime, timedelta
 
 sys.path.append(str(Path(__file__).resolve().parents[2]))
 
@@ -132,3 +133,187 @@ def class_checkin(class_id):
             reason=message,
             message=message,
         )
+
+@class_bp.route("/class")
+def class_list():
+    token = session.get("token")
+
+    if not token:
+        return redirect("/signin")
+
+    try:
+        response = requests.get(
+            f"{API_BASE}/class",
+            headers={"Authorization": f"Bearer {token}"},
+            timeout=20,
+        )
+
+        response.raise_for_status()
+
+        classes = response.json()
+        
+    except requests.RequestException as e:
+        print(f"Class API error: {e}")
+        flash("Unable to load classes.", "danger")
+        return render_template(
+            "classes/class_list.html",
+            next_week=[],
+            current_week=[],
+            current_month=[],
+            last_month=[],
+            older=[],
+        )
+
+    except ValueError:
+        print("Invalid JSON returned from API")
+        print(response.text)
+        flash("Invalid response from server.", "danger")
+        return render_template(
+            "classes/classes.html",
+            next_week=[],
+            current_week=[],
+            current_month=[],
+            last_month=[],
+            older=[],
+        )
+
+    # If API returns {"items": [...]}
+    if isinstance(classes, dict):
+        classes = classes.get("items", [])
+
+    now = datetime.now()
+
+    start_week = (now - timedelta(days=now.weekday())).replace(
+        hour=0,
+        minute=0,
+        second=0,
+        microsecond=0,
+    )
+
+    end_week = start_week + timedelta(days=7)
+
+    start_next_week = end_week
+    end_next_week = start_next_week + timedelta(days=7)
+
+    start_month = now.replace(
+        day=1,
+        hour=0,
+        minute=0,
+        second=0,
+        microsecond=0,
+    )
+
+    if start_month.month == 1:
+        start_last_month = start_month.replace(
+            year=start_month.year - 1,
+            month=12,
+        )
+    else:
+        start_last_month = start_month.replace(
+            month=start_month.month - 1,
+        )
+
+    next_week = []
+    current_week = []
+    current_month = []
+    last_month = []
+    older = []
+
+    for cls in classes:
+
+        class_dt = cls.get("class_datetime")
+
+        if not class_dt:
+            continue
+
+        # Handles both ISO strings and trailing Z
+        dt = datetime.fromisoformat(
+            class_dt.replace("Z", "+00:00")
+        )
+
+        # Remove timezone if API sends one
+        if dt.tzinfo:
+            dt = dt.replace(tzinfo=None)
+
+        cls["date_formatted_html"] = format_class_details(cls)["html"]
+
+        if start_next_week <= dt < end_next_week:
+            next_week.append(cls)
+
+        elif start_week <= dt < end_week:
+            current_week.append(cls)
+
+        elif start_month <= dt < start_week:
+            current_month.append(cls)
+
+        elif start_last_month <= dt < start_month:
+            last_month.append(cls)
+
+        else:
+            older.append(cls)
+
+    return render_template(
+        "classes/class_list.html",
+        next_week=sorted(next_week, key=lambda x: x["class_datetime"]),
+        current_week=sorted(current_week, key=lambda x: x["class_datetime"]),
+        current_month=sorted(current_month, key=lambda x: x["class_datetime"]),
+        last_month=sorted(last_month, key=lambda x: x["class_datetime"], reverse=True),
+        older=sorted(older, key=lambda x: x["class_datetime"], reverse=True),
+    )
+
+@class_bp.route("/class/create", methods=["POST"])
+def class_create():
+    token = session.get("token")
+
+    if not token:
+        return redirect("/signin")
+
+    if request.method == "POST":
+
+        # -------------------------
+        # Parse date + time → datetime
+        # -------------------------
+        class_date = request.form.get("class_date")  # YYYY-MM-DD
+        class_time = request.form.get("class_time")  # HH:MM (24hr from input[type=time])
+
+        try:
+            class_datetime = datetime.strptime(
+                f"{class_date} {class_time}",
+                "%Y-%m-%d %H:%M"
+            ).isoformat()
+        except Exception:
+            flash("Invalid date/time format", "danger")
+            return redirect(url_for("class_.class_create"))
+
+        # -------------------------
+        # Normalize fields
+        # -------------------------
+        payload = {
+            "name": request.form.get("name"),
+            "description": request.form.get("description"),
+            "class_datetime": class_datetime,
+            "duration": int(request.form.get("duration") or 0),
+            "promotion": int(request.form.get("promotion") or 0),
+        }
+
+        # -------------------------
+        # API call
+        # -------------------------
+        try:
+            response = requests.post(
+                f"{API_BASE}/class",
+                json=payload,
+                headers={"Authorization": f"Bearer {token}"},
+                timeout=20,
+            )
+
+            if not response.ok:
+                flash(f"Unable to create class: {response.text}", "danger")
+                return redirect(url_for("class_.class_create"))
+
+            flash("Class created successfully.", "success")
+            return redirect(url_for("class_.class_list"))
+
+        except requests.RequestException as e:
+            flash(f"Request failed: {str(e)}", "danger")
+            return redirect(url_for("class_.class_create"))
