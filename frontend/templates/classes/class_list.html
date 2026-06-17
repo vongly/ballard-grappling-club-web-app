@@ -77,9 +77,13 @@
           </div>
           {% endif %}
 
-          <div class="link-container">
-            <a href="/class/{{ class.id }}/students">
-              View Class
+          <div class="button-row">
+            <a href="/class/{{ class.id }}/students" class="btn">
+              Attendance
+            </a>
+
+            <a href="/qr/class/{{ class.id }}" class="btn">
+              Class
             </a>
           </div>
 
