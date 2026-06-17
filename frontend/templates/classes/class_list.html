@@ -3,6 +3,12 @@
 {% block content %}
 
 <style>
+  .card {
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 8px;
+  }
+
   .muted {
     opacity: 0.7;
   }
@@ -35,6 +41,25 @@
     text-decoration: none;
     text-align: center;
   }
+
+  /* =========================
+     DATE-BASED CARD COLORS
+     ========================= */
+
+  .card-past {
+      background: #f7f2e8;
+      border: 1px solid #f2d6a2;
+    }
+    
+  .card-today {
+      background: #f4faf6;
+      border: 1px solid #cde8d4;
+    }
+    
+    .card-future {
+      background: #f3f6f9;
+      border: 1px solid #e1e8f0;
+  }
 </style>
 
 <div id="dashboard">
@@ -59,7 +84,12 @@
         <h3 class="section-title">Next Week</h3>
 
         {% for class in next_week %}
-        <div class="card">
+        <div class="card
+          {% if class._dt.date() < today %}card-past
+          {% elif class._dt.date() == today %}card-today
+          {% else %}card-future
+          {% endif %}
+        ">
 
           <div>
             {{ class.date_formatted_html | safe }}
@@ -99,7 +129,12 @@
         <h3 class="section-title">This Week</h3>
 
         {% for class in current_week %}
-        <div class="card">
+        <div class="card
+          {% if class._dt.date() < today %}card-past
+          {% elif class._dt.date() == today %}card-today
+          {% else %}card-future
+          {% endif %}
+        ">
 
           <div>
             {{ class.date_formatted_html | safe }}
@@ -126,6 +161,7 @@
               Class
             </a>
           </div>
+
         </div>
         {% endfor %}
 
@@ -138,7 +174,12 @@
         <h3 class="section-title">This Month</h3>
 
         {% for class in current_month %}
-        <div class="card">
+        <div class="card
+          {% if class._dt.date() < today %}card-past
+          {% elif class._dt.date() == today %}card-today
+          {% else %}card-future
+          {% endif %}
+        ">
 
           <div>
             {{ class.date_formatted_html | safe }}
@@ -147,6 +188,12 @@
           {% if class.promotion == 1 %}
           <div class="promo">
             Promotional Class
+          </div>
+          {% endif %}
+
+          {% if class.instructor %}
+          <div class="muted">
+            Instructor: {{ class.instructor }}
           </div>
           {% endif %}
 
@@ -172,7 +219,12 @@
         <h3 class="section-title">Last Month</h3>
 
         {% for class in last_month %}
-        <div class="card">
+        <div class="card
+          {% if class._dt.date() < today %}card-past
+          {% elif class._dt.date() == today %}card-today
+          {% else %}card-future
+          {% endif %}
+        ">
 
           <div>
             {{ class.date_formatted_html | safe }}
@@ -181,6 +233,12 @@
           {% if class.promotion == 1 %}
           <div class="promo">
             Promotional Class
+          </div>
+          {% endif %}
+
+          {% if class.instructor %}
+          <div class="muted">
+            Instructor: {{ class.instructor }}
           </div>
           {% endif %}
 
@@ -208,7 +266,12 @@
         </h3>
 
         {% for class in older %}
-        <div class="card">
+        <div class="card
+          {% if class._dt.date() < today %}card-past
+          {% elif class._dt.date() == today %}card-today
+          {% else %}card-future
+          {% endif %}
+        ">
 
           <div>
             {{ class.date_formatted_html | safe }}
