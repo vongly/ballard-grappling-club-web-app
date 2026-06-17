@@ -5,7 +5,7 @@ from flask import Blueprint, render_template, request, session, redirect, flash,
 
 from urllib.parse import urlencode
 import requests
-from datetime import datetime, timedelta, date
+from datetime import datetime, timedelta, date, timezone
 
 sys.path.append(str(Path(__file__).resolve().parents[2]))
 
@@ -243,7 +243,7 @@ def class_list():
 
     return render_template(
         "classes/class_list.html",
-        today=date.today(),
+        today=datetime.now(timezone.utc).date(),
         next_week=sort_desc(next_week),
         current_week=sort_desc(current_week),
         current_month=sort_desc(current_month),
