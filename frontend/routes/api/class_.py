@@ -243,7 +243,7 @@ def class_list():
 
     return render_template(
         "classes/class_list.html",
-        today=datetime.now(timezone.utc).date(),
+        today=datetime.now(timezone.utc).date() + timedelta(days=1),
         next_week=sort_desc(next_week),
         current_week=sort_desc(current_week),
         current_month=sort_desc(current_month),
