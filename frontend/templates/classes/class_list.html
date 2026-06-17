@@ -2,6 +2,41 @@
 
 {% block content %}
 
+<style>
+  .muted {
+    opacity: 0.7;
+  }
+
+  .promo {
+    color: #b58900;
+    font-weight: 600;
+  }
+
+  .section-title {
+    margin-bottom: 10px;
+  }
+
+  .link-container {
+    margin-top: 10px;
+  }
+
+  .button-row {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+
+  .btn {
+    flex: 1;
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    text-decoration: none;
+    text-align: center;
+  }
+</style>
+
 <div id="dashboard">
 
   <div class="dashboard-card">
@@ -10,7 +45,7 @@
     <div class="profile-header">
       <div class="profile-info">
         <h2>Classes</h2>
-        <div style="opacity: 0.7;">
+        <div class="muted">
           {{ current_week|length }} classes this week
         </div>
       </div>
@@ -21,7 +56,7 @@
       <!-- NEXT WEEK -->
       {% if next_week %}
       <div>
-        <h3 style="margin-bottom: 10px;">Next Week</h3>
+        <h3 class="section-title">Next Week</h3>
 
         {% for class in next_week %}
         <div class="card">
@@ -31,18 +66,18 @@
           </div>
 
           {% if class.promotion == 1 %}
-          <div style="color: #b58900; font-weight: 600;">
+          <div class="promo">
             Promotional Class
           </div>
           {% endif %}
 
           {% if class.instructor %}
-          <div style="opacity: 0.7;">
+          <div class="muted">
             Instructor: {{ class.instructor }}
           </div>
           {% endif %}
 
-          <div style="margin-top: 10px;">
+          <div class="link-container">
             <a href="/class/{{ class.id }}/students">
               View Class
             </a>
@@ -57,7 +92,7 @@
       <!-- CURRENT WEEK -->
       {% if current_week %}
       <div>
-        <h3 style="margin-bottom: 10px;">This Week</h3>
+        <h3 class="section-title">This Week</h3>
 
         {% for class in current_week %}
         <div class="card">
@@ -67,23 +102,26 @@
           </div>
 
           {% if class.promotion == 1 %}
-          <div style="color: #b58900; font-weight: 600;">
+          <div class="promo">
             Promotional Class
           </div>
           {% endif %}
 
           {% if class.instructor %}
-          <div style="opacity: 0.7;">
+          <div class="muted">
             Instructor: {{ class.instructor }}
           </div>
           {% endif %}
 
-          <div style="margin-top: 10px;">
-            <a href="/class/{{ class.id }}/students">
-              View Class
+          <div class="button-row">
+            <a href="/class/{{ class.id }}/students" class="btn">
+              Attendance
+            </a>
+
+            <a href="/qr/class/{{ class.id }}" class="btn">
+              Class
             </a>
           </div>
-
         </div>
         {% endfor %}
 
@@ -93,7 +131,7 @@
       <!-- CURRENT MONTH -->
       {% if current_month %}
       <div>
-        <h3 style="margin-bottom: 10px;">This Month</h3>
+        <h3 class="section-title">This Month</h3>
 
         {% for class in current_month %}
         <div class="card">
@@ -103,14 +141,18 @@
           </div>
 
           {% if class.promotion == 1 %}
-          <div style="color: #b58900; font-weight: 600;">
+          <div class="promo">
             Promotional Class
           </div>
           {% endif %}
 
-          <div style="margin-top: 10px;">
-            <a href="/class/{{ class.id }}/students">
-              View Class
+          <div class="button-row">
+            <a href="/class/{{ class.id }}/students" class="btn">
+              Attendance
+            </a>
+
+            <a href="/qr/class/{{ class.id }}" class="btn">
+              Class
             </a>
           </div>
 
@@ -123,7 +165,7 @@
       <!-- LAST MONTH -->
       {% if last_month %}
       <div>
-        <h3 style="margin-bottom: 10px;">Last Month</h3>
+        <h3 class="section-title">Last Month</h3>
 
         {% for class in last_month %}
         <div class="card">
@@ -133,14 +175,18 @@
           </div>
 
           {% if class.promotion == 1 %}
-          <div style="color: #b58900; font-weight: 600;">
+          <div class="promo">
             Promotional Class
           </div>
           {% endif %}
 
-          <div style="margin-top: 10px;">
-            <a href="/class/{{ class.id }}/students">
-              View Class
+          <div class="button-row">
+            <a href="/class/{{ class.id }}/students" class="btn">
+              Attendance
+            </a>
+
+            <a href="/qr/class/{{ class.id }}" class="btn">
+              Class
             </a>
           </div>
 
@@ -153,7 +199,7 @@
       <!-- OLDER -->
       {% if older %}
       <div>
-        <h3 style="margin-bottom: 10px;">
+        <h3 class="section-title">
           Older Classes ({{ older|length }})
         </h3>
 
@@ -165,14 +211,18 @@
           </div>
 
           {% if class.promotion == 1 %}
-          <div style="color: #b58900; font-weight: 600;">
+          <div class="promo">
             Promotional Class
           </div>
           {% endif %}
 
-          <div style="margin-top: 10px;">
-            <a href="/class/{{ class.id }}/students">
-              View Class
+          <div class="button-row">
+            <a href="/class/{{ class.id }}/students" class="btn">
+              Attendance
+            </a>
+
+            <a href="/qr/class/{{ class.id }}" class="btn">
+              Class
             </a>
           </div>
 

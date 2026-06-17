@@ -147,11 +147,9 @@ def class_list():
             headers={"Authorization": f"Bearer {token}"},
             timeout=20,
         )
-
         response.raise_for_status()
-
         classes = response.json()
-        
+
     except requests.RequestException as e:
         print(f"Class API error: {e}")
         flash("Unable to load classes.", "danger")
@@ -169,7 +167,7 @@ def class_list():
         print(response.text)
         flash("Invalid response from server.", "danger")
         return render_template(
-            "classes/classes.html",
+            "classes/class_list.html",
             next_week=[],
             current_week=[],
             current_month=[],
@@ -177,30 +175,21 @@ def class_list():
             older=[],
         )
 
-    # If API returns {"items": [...]}
     if isinstance(classes, dict):
         classes = classes.get("items", [])
 
     now = datetime.now()
 
     start_week = (now - timedelta(days=now.weekday())).replace(
-        hour=0,
-        minute=0,
-        second=0,
-        microsecond=0,
+        hour=0, minute=0, second=0, microsecond=0
     )
-
     end_week = start_week + timedelta(days=7)
 
     start_next_week = end_week
     end_next_week = start_next_week + timedelta(days=7)
 
     start_month = now.replace(
-        day=1,
-        hour=0,
-        minute=0,
-        second=0,
-        microsecond=0,
+        day=1, hour=0, minute=0, second=0, microsecond=0
     )
 
     if start_month.month == 1:
@@ -220,22 +209,19 @@ def class_list():
     older = []
 
     for cls in classes:
-
         class_dt = cls.get("class_datetime")
-
         if not class_dt:
             continue
 
-        # Handles both ISO strings and trailing Z
-        dt = datetime.fromisoformat(
-            class_dt.replace("Z", "+00:00")
-        )
+        dt = datetime.fromisoformat(class_dt.replace("Z", "+00:00"))
 
-        # Remove timezone if API sends one
         if dt.tzinfo:
             dt = dt.replace(tzinfo=None)
 
         cls["date_formatted_html"] = format_class_details(cls)["html"]
+
+        # store parsed datetime so sorting is reliable
+        cls["_dt"] = dt
 
         if start_next_week <= dt < end_next_week:
             next_week.append(cls)
@@ -252,13 +238,16 @@ def class_list():
         else:
             older.append(cls)
 
+    def sort_desc(bucket):
+        return sorted(bucket, key=lambda x: x["_dt"], reverse=True)
+
     return render_template(
         "classes/class_list.html",
-        next_week=sorted(next_week, key=lambda x: x["class_datetime"]),
-        current_week=sorted(current_week, key=lambda x: x["class_datetime"]),
-        current_month=sorted(current_month, key=lambda x: x["class_datetime"]),
-        last_month=sorted(last_month, key=lambda x: x["class_datetime"], reverse=True),
-        older=sorted(older, key=lambda x: x["class_datetime"], reverse=True),
+        next_week=sort_desc(next_week),
+        current_week=sort_desc(current_week),
+        current_month=sort_desc(current_month),
+        last_month=sort_desc(last_month),
+        older=sort_desc(older),
     )
 
 @class_bp.route("/class/create", methods=["GET", "POST"])
