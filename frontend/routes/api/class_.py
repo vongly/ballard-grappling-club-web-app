@@ -20,7 +20,7 @@ def class_students(class_id):
     token = session.get("token")
 
     if not token:
-        return redirect("/signin")
+        return redirect(url_for("signin", next=request.full_path))
 
     try:
         response = requests.get(
@@ -65,7 +65,7 @@ def class_checkin(class_id):
 
     # If no auth token → redirect to signin with return path
     if not token:
-        return redirect(signin_url)
+        return redirect(url_for("signin", next=request.full_path))
 
     try:
         resp = requests.get(
@@ -139,7 +139,7 @@ def class_list():
     token = session.get("token")
 
     if not token:
-        return redirect("/signin")
+        return redirect(url_for("signin", next=request.full_path))
 
     try:
         response = requests.get(
@@ -256,7 +256,7 @@ def class_create():
     token = session.get("token")
 
     if not token:
-        return redirect("/signin")
+        return redirect(url_for("signin", next=request.full_path))
 
     if request.method == "POST":
 
