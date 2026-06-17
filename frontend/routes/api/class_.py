@@ -261,7 +261,7 @@ def class_list():
         older=sorted(older, key=lambda x: x["class_datetime"], reverse=True),
     )
 
-@class_bp.route("/class/create", methods=["POST"])
+@class_bp.route("/class/create", methods=["GET", "POST"])
 def class_create():
     token = session.get("token")
 
@@ -270,11 +270,8 @@ def class_create():
 
     if request.method == "POST":
 
-        # -------------------------
-        # Parse date + time → datetime
-        # -------------------------
-        class_date = request.form.get("class_date")  # YYYY-MM-DD
-        class_time = request.form.get("class_time")  # HH:MM (24hr from input[type=time])
+        class_date = request.form.get("class_date")
+        class_time = request.form.get("class_time")
 
         try:
             class_datetime = datetime.strptime(
@@ -285,9 +282,6 @@ def class_create():
             flash("Invalid date/time format", "danger")
             return redirect(url_for("class_.class_create"))
 
-        # -------------------------
-        # Normalize fields
-        # -------------------------
         payload = {
             "name": request.form.get("name"),
             "description": request.form.get("description"),
@@ -296,9 +290,6 @@ def class_create():
             "promotion": int(request.form.get("promotion") or 0),
         }
 
-        # -------------------------
-        # API call
-        # -------------------------
         try:
             response = requests.post(
                 f"{API_BASE}/class",
@@ -317,3 +308,6 @@ def class_create():
         except requests.RequestException as e:
             flash(f"Request failed: {str(e)}", "danger")
             return redirect(url_for("class_.class_create"))
+
+    # ✅ THIS WAS MISSING (GET handler)
+    return render_template("classes/class_create.html")
