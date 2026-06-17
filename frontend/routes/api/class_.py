@@ -269,7 +269,7 @@ def class_create():
             ).isoformat()
         except Exception:
             flash("Invalid date/time format", "danger")
-            return redirect(url_for("class_.class_create"))
+            return redirect(url_for("class.class_create"))
 
         payload = {
             "name": request.form.get("name"),
@@ -289,14 +289,14 @@ def class_create():
 
             if not response.ok:
                 flash(f"Unable to create class: {response.text}", "danger")
-                return redirect(url_for("class_.class_create"))
+                return redirect(url_for("class.class_create"))
 
             flash("Class created successfully.", "success")
-            return redirect(url_for("class_.class_list"))
+            return redirect(url_for("class.class_list"))
 
         except requests.RequestException as e:
             flash(f"Request failed: {str(e)}", "danger")
-            return redirect(url_for("class_.class_create"))
+            return redirect(url_for("class.class_create"))
 
     # ✅ THIS WAS MISSING (GET handler)
     return render_template("classes/class_create.html")
