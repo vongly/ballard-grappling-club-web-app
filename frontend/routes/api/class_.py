@@ -306,6 +306,11 @@ def class_checkin(class_id):
 
 @class_bp.route("/class/today")
 def class_checkin_today():
+    token = session.get("token")
+
+    if not token:
+        return redirect(url_for("signin", next=request.full_path))
+
     try:
         response = requests.get(
             f"{API_BASE}/class/today",
