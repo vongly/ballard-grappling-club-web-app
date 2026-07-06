@@ -1,6 +1,6 @@
 import sys
 from pathlib import Path
-from datetime import datetime, date, timedelta, timezone
+from datetime import datetime, date, timedelta, timezone, time
 from dateutil.relativedelta import relativedelta
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -33,8 +33,29 @@ UTC = ZoneInfo("UTC")
 router = APIRouter()
 
 @router.get("/", response_model=List[ClassOut])
-def get_all_classes(db: Session = Depends(get_db)):
+def get_classes_all(db: Session = Depends(get_db)):
     return db.query(Class).order_by(Class.class_datetime).all()
+
+@router.get("/today", response_model=List[ClassOut])
+def get_classes_today(db: Session = Depends(get_db)):
+    PACIFIC = ZoneInfo("America/Los_Angeles")
+    UTC = ZoneInfo("UTC")
+
+    # Today's date in Pacific Time
+    today = datetime.now(PACIFIC).date()
+
+    # Midnight Pacific
+    start_pt = datetime.combine(today, time.min, tzinfo=PACIFIC)
+    end_pt = start_pt + timedelta(days=1)
+
+    # Convert to UTC for querying
+    start_utc = start_pt.astimezone(UTC)
+    end_utc = end_pt.astimezone(UTC)
+
+    return db.query(Class).filter(
+            Class.class_datetime >= start_utc,
+            Class.class_datetime < end_utc,
+        ).order_by(Class.class_datetime).all()
 
 @router.get("/{class_id}", response_model=ClassOut)
 def get_class(class_id: int, db: Session = Depends(get_db)):
@@ -87,6 +108,8 @@ def create_batch(payload: List[ClassCreate], db: Session = Depends(get_db)):
 
     db.add_all(objects)
     db.commit()
+
+
 
 # CLASS CHECKIN
 

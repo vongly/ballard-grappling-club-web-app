@@ -112,7 +112,7 @@ def create_qr_code(
 
 if __name__ == '__main__':
     create_qr_code(
-        "https://ballardgrapplingclub.com",
-        output_path="home_qr.svg",
+        "https://ballardgrapplingclub.com/class/today",
+        output_path="classes_today_qr.svg",
     )
 

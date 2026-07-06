@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+  .card {
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    background: #f4faf6;
+    border: 1px solid #cde8d4;
+  }
+
+  .muted {
+    opacity: 0.7;
+  }
+
+  .promo {
+    color: #b58900;
+    font-weight: 600;
+  }
+
+  .section-title {
+    margin-bottom: 10px;
+  }
+
+  .button-row {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .btn {
+    flex: 1;
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    text-decoration: none;
+    text-align: center;
+  }
+</style>
+
+<div id="dashboard">
+
+  <div class="dashboard-card">
+
+    <div class="profile-header">
+      <div class="profile-info">
+        <h2>Check Into Class</h2>
+        <div class="muted">
+          {{ classes|length }} class{% if classes|length != 1 %}es{% endif %} today
+        </div>
+      </div>
+    </div>
+
+    <div class="stack">
+
+      {% if classes %}
+
+        {% for class in classes %}
+
+        <div class="card">
+
+          <div>
+            {{ class.date_formatted_html | safe }}
+          </div>
+
+          {% if class.promotion == 1 %}
+          <div class="promo">
+            Promotional Class
+          </div>
+          {% endif %}
+
+          {% if class.instructor %}
+          <div class="muted">
+            Instructor: {{ class.instructor }}
+          </div>
+          {% endif %}
+
+          <div class="button-row">
+            <a href="/class/{{ class.id }}/checkin" class="btn">
+              Check In
+            </a>
+          </div>
+
+        </div>
+
+        {% endfor %}
+
+      {% else %}
+
+        <div class="card">
+          <div class="muted">
+            There are no classes scheduled for today.
+          </div>
+        </div>
+
+      {% endif %}
+
+    </div>
+
+  </div>
+
+</div>
+
+{% endblock %}
