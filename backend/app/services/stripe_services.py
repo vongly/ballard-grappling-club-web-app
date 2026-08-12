@@ -15,18 +15,15 @@ sys.path.append(str(Path(__file__).resolve().parents[2]))
 
 from env import STRIPE_KEY, TRIAL_LENGTH
 
-# times in utc
-now = datetime.now()
-FIRST_DAY_NEXT_MONTH = (
-    now.replace(day=1, hour=10) + relativedelta(months=1)
-)
-LAUNCH_TIMESTAMP = datetime(2026, 6, 1, 11, 0, 0)
 
+    # times in utc
+    LAUNCH_TIMESTAMP = datetime(2026, 6, 1, 11, 0, 0)
 
 class StripeServices:
     def __init__(self, api_key: str, db):
         stripe.api_key = api_key
         self.db = db
+
 
     def get_products(self):
         product_obj = stripe.Product.list(active=True)
@@ -136,7 +133,12 @@ class StripeServices:
             self.db.refresh(subscription)
         return customer
 
-    def create_checkout(self, student_id: int, product_id: int, frontend_url: str, first_day_next_month=FIRST_DAY_NEXT_MONTH, launch_timestamp=LAUNCH_TIMESTAMP):
+    def create_checkout(self, student_id: int, product_id: int, frontend_url: str, launch_timestamp=LAUNCH_TIMESTAMP):
+
+        now = datetime.now()
+        first_day_next_month = (
+            now.replace(day=1, hour=10) + relativedelta(months=1)
+        )
 
         student = self.db.query(Student).filter(Student.id == student_id).first()
         product = self.db.query(Product).filter(Product.id == product_id).first()
@@ -169,13 +171,12 @@ class StripeServices:
             "allow_promotion_codes": True,
         }
 
-
         # 3. ONLY add subscription_data if needed (optional)
         if mode == "subscription" and first_day_next_month and launch_timestamp:
-            if now < LAUNCH_TIMESTAMP - timedelta(days=2):
+            if now < launch_timestamp - timedelta(days=2):
                 # PRE-LAUNCH: no billing until launch
                 checkout_data["subscription_data"] = {
-                    "trial_end": int(LAUNCH_TIMESTAMP.timestamp())
+                    "trial_end": int(launch_timestamp.timestamp())
                 }
             else:
                 # POST-LAUNCH: normal billing - no trial
