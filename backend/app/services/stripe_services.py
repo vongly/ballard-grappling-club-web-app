@@ -16,8 +16,8 @@ sys.path.append(str(Path(__file__).resolve().parents[2]))
 from env import STRIPE_KEY, TRIAL_LENGTH
 
 
-    # times in utc
-    LAUNCH_TIMESTAMP = datetime(2026, 6, 1, 11, 0, 0)
+# times in utc
+LAUNCH_TIMESTAMP = datetime(2026, 6, 1, 11, 0, 0)
 
 class StripeServices:
     def __init__(self, api_key: str, db):
