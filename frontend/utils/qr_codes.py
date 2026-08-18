@@ -16,20 +16,17 @@ def create_qr_code(
 
     # FIXED OUTPUT SIZE (this is the key change)
     CANVAS_SIZE = 380
-
     BORDER_RATIO = 0.08  # percent padding inside canvas
 
-    # -----------------------------
+
     # Generate QR (fixed version helps consistency too)
-    # -----------------------------
 
     qr = segno.make(url, error="H")
     matrix = qr.matrix
     qr_size = len(matrix)
 
-    # -----------------------------
+
     # Derived layout system
-    # -----------------------------
 
     border = int(qr_size * BORDER_RATIO)
 
@@ -42,9 +39,8 @@ def create_qr_code(
 
     radius = CANVAS_SIZE * 0.2
 
-    # -----------------------------
+
     # Build SVG
-    # -----------------------------
 
     svg_parts = []
 
@@ -56,9 +52,8 @@ def create_qr_code(
 
     svg_parts.append('<rect width="100%" height="100%" fill="white"/>')
 
-    # -----------------------------
+
     # Draw QR (scaled into fixed canvas)
-    # -----------------------------
 
     for y, row in enumerate(matrix):
         for x, val in enumerate(row):
@@ -79,9 +74,8 @@ def create_qr_code(
                 f'<rect x="{px}" y="{py}" width="{scale}" height="{scale}" fill="#{qr_color_code}"/>'
             )
 
-    # -----------------------------
+
     # Add logo (fixed coordinate space)
-    # -----------------------------
 
     png_bytes = LOGO_FILE.read_bytes()
     png_b64 = base64.b64encode(png_bytes).decode("utf-8")
@@ -90,10 +84,6 @@ def create_qr_code(
     logo_size = radius * 5
     logo_x = center_x - logo_size / 2 - 1
     logo_y = center_y - logo_size / 2 + 8
-
-#    logo_size = radius * 1.54
-#    logo_x = center_x - logo_size / 2 
-#    logo_y = center_y - logo_size / 2 
 
     svg_parts.append(
         f'<image href="{logo_data_uri}" '
@@ -113,6 +103,6 @@ def create_qr_code(
 if __name__ == '__main__':
     create_qr_code(
         "https://ballardgrapplingclub.com/class/today",
-        output_path="classes_today_qr.svg",
+        output_path="svg/classes_today_qr.svg",
     )
 

@@ -1,11 +1,12 @@
 notes.txt
 test.json
 docker-compose.yml
-
   
 */alembic.ini
 
 *.json
+
+svg/*
 
 # =========================
 # ENV / SECRETS
@@ -77,6 +78,7 @@ build/
 # DOCKER
 # =========================
 docker-compose.override.yml
+*Dockerfile
 
 # =========================
 # IDE / EDITORS
