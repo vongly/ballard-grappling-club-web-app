@@ -101,8 +101,42 @@ def create_qr_code(
     return svg
 
 if __name__ == '__main__':
-    create_qr_code(
-        "https://ballardgrapplingclub.com/class/today",
-        output_path="svg/classes_today_qr.svg",
+
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Generate a QR code SVG")
+
+    parser.add_argument(
+        "url",
+        help="URL to encode in the QR code"
     )
 
+    parser.add_argument(
+        "-o",
+        "--output",
+        default=None,
+        help="Output SVG file path"
+    )
+
+    parser.add_argument(
+        "-c",
+        "--color",
+        default="424f64",
+        help="QR code color (hex without #)"
+    )
+
+    parser.add_argument(
+        "-l",
+        "--logo",
+        default=LOGO_PATH,
+        help="Path to logo file"
+    )
+
+    args = parser.parse_args()
+
+    create_qr_code(
+        url=args.url,
+        logo_filepath_relative=args.logo,
+        output_path=args.output,
+        qr_color_code=args.color,
+    )
